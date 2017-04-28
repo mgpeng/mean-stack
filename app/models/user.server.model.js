@@ -1,7 +1,6 @@
 const mongoose=require('mongoose');
 const crypto=require('crypto');
 const Schema= mongoose.Schema;
-
 const UserSchema=new Schema({
     firstName:String,
     lastName:String,
@@ -49,7 +48,6 @@ const UserSchema=new Schema({
         }
     }
 });
-
 UserSchema.virtual('fullName')
           .get(function(){return this.firstName+' '+this.lastName;})
           .set(function(fullName){
@@ -57,7 +55,6 @@ UserSchema.virtual('fullName')
               this.firstName=splitName[0] || '';
               this.lastName=splitName[1] || '';
           });
-
 UserSchema.pre('save',function(next){
     if (this.password){
         this.salt=new Buffer(crypto.randomBytes(16).toString('base64'),'base64');
@@ -65,17 +62,14 @@ UserSchema.pre('save',function(next){
     }
     next();
 });
-
 UserSchema.methods.hashPassword=function(password){
     return crypto.pbkdf2Sync(password,this.salt,10000,64).toString('base64');
 };
-
 UserSchema.methods.authenticate=function(password){
     console.log('inside UserSchema.methods.authenticate check this keyword');
     console.log(this);
     return this.password === this.hashPassword(password);
 };
-
 UserSchema.statics.findUniqueUsername=function(username,suffix,callback){
     var possibleUsername=username+(suffix||'');
     console.log('inside UserSchema.statics.findUniqueUsername  check this keyword');
@@ -92,11 +86,8 @@ UserSchema.statics.findUniqueUsername=function(username,suffix,callback){
         }
     });
 };
-
 UserSchema.set('toJSON',{getters:true,virtuals:true});
-
 mongoose.model('User',UserSchema);
-
 const PostSchema=new Schema({
     title:{
         type:String,
