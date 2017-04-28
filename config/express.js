@@ -1,15 +1,23 @@
+const path = require('path')
 const config = require('./config');
+const http=require('http');
+const socketio=require('socket.io');
 const express = require('express');
 const morgan = require('morgan');
 const compress = require('compression');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const session = require('express-session');
+const MongoStore=require('connect-mongo')(session);
 const passport=require('passport');
+const configureSocket = require('./socketio');
 const flash= require('connect-flash');
 
-module.exports = ()=>{
+module.exports = (db)=>{
     const app=express();
+    const server=http.createServer(app);
+    const io=socketio.listen(server);
+
     if (process.env.NODE_ENV === 'development'){
         app.use(morgan('dev'));
     }else if (process.env.NODE_ENV === 'production') {
@@ -20,11 +28,13 @@ module.exports = ()=>{
     }));
     app.use(bodyParser.json());
     app.use(methodOverride());
-
+    
+    const mongoStore=new MongoStore({mongooseConnection:db.connection});
     app.use(session({
         saveUninitialized:true,
         resave:true,
-        secret:config.sessionSecret
+        secret:config.sessionSecret,
+        store:mongoStore
     }))
 
     app.set('views','./app/views');
@@ -33,10 +43,16 @@ module.exports = ()=>{
     app.use(flash());
     app.use(passport.initialize());
     app.use(passport.session());
-    
-    require('../app/routes/index.server.routes')(app);
-    require('../app/routes/users.server.routes')(app);
 
-    app.use(express.static('./public'));
-    return app;
+    // app.use(express.static('./public'));
+    app.use('/', express.static(path.resolve('./public')));
+    app.use('/lib', express.static(path.resolve('./node_modules')));
+
+    require('../app/routes/users.server.routes')(app);
+    require('../app/routes/articles.server.routes')(app);
+    require('../app/routes/index.server.routes')(app);
+
+    configureSocket(server, io, mongoStore);
+
+    return server;
 }

@@ -1,38 +1,52 @@
 const User= require('mongoose').model('User');
 const passport = require('passport');
 
+exports.requireLogin=(req,res,next)=>{
+    if(!req.isAuthenticated){
+        return res.status(401).send({message:'User is not logged in'});
+    }
+    next();
+};
+
 exports.saveOAuthUserProfile = function(req, profile, done) {
   User.findOne({
     provider: profile.provider,
     providerId: profile.providerId
-  }, (err, user) => {
+  }, function(err, user) {
     if (err) {
       return done(err);
     } else {
       if (!user) {
-        const possibleUsername = profile.username || 
-                                 ((profile.email) ? profile.email.split('@')[0] : '');
+        const possibleUsername = profile.username ||
+        ((profile.email) ? profile.email.split('@')[0] : '');
 
-        User.findUniqueUsername(possibleUsername, null, (availableUsername) => {
-          const newUser = new User(profile);
-          newUser.username = availableUsername;
-          newUser.save((err) => {
-            return done(err, newUser);
+        User.findUniqueUsername(possibleUsername, null,
+        function(availableUsername) {
+          profile.username = availableUsername;
+
+          user = new User(profile);
+          user.save((err) => {
+            if (err) {
+              const message = _this.getErrorMessage(err);
+              console.log("Check _this meaning");
+              console.log(_this);
+              req.flash('error', message);
+              return res.redirect('/signup');
+            }
+
+            return done(err, user);
           });
         });
-      }else{
+      } else {
         return done(err, user);
       }
     }
   });
 };
 
-
 getErrorMessage=(err)=>{
     let message='';
     if (err.code){
-        console.log('err.code');
-        console.log(err.code);
         switch(err.code){
             case 11000:
             case 11001:
@@ -42,13 +56,13 @@ getErrorMessage=(err)=>{
                message='Something went wrong';
         }
     }else{
-         console.log('err.errors');
-         console.log(err.errors);
         for (let errName in err.errors){
             if (err.errors[errName].message)
                  message=err.errors[errName].message;
         }
     }
+    console.log('Error message in getErrorMessage');
+    console.log(message);
     return message;
 };
 exports.renderSignin=(req,res,next)=>{
@@ -71,29 +85,73 @@ exports.renderSignup=(req,res,next)=>{
         return res.redirect('/');
     }
 };
-exports.signup=(req,res,next)=>{
-    if(!req.user){
-        const user=new User(req.body);
-        user.provider='local';
-        user.save((err)=>{
-            if(err){
-                const message=getErrorMessage(err);
-                req.flash('error',message);
-                return res.redirect('/signup');
-            }
+exports.signin=(req,res,next)=>{
+    passport.authenticate('local',(err,user,info)=>{
+        if(err||!user){
+            res.status(400).send(info);
+        }else{
+            user.password=undefined;
+            user.salt=undefined;
             req.login(user,(err)=>{
-                if(err) return next(err);
-                return res.redirect('/');
+               if(err){
+                res.status(400).send(err);
+               }else{
+                res.json(user);
+               }
             });
-        });
-    }else{
-        return res.redirect('/');
-    }
+        }
+    })(req,res,next);
 };
+// exports.signup=(req,res,next)=>{
+    // if(!req.user){
+    //     const user=new User(req.body);
+    //     user.provider='local';
+    //     user.save((err)=>{
+    //         if(err){
+    //             const message=getErrorMessage(err);
+    //             req.flash('error',message);
+    //             return res.redirect('/signup');
+    //         }
+    //         req.login(user,(err)=>{
+    //             if(err) return next(err);
+    //             return res.redirect('/');
+    //         });
+    //     });
+    // }else{
+    //     return res.redirect('/');
+    // }
+// };
+exports.signup = function(req, res) {
+  const user = new User(req.body);
+  user.provider = 'local';
+
+  user.save((err) => {
+    if (err) {
+      return res.status(400).send({
+        message: getErrorMessage(err)
+      });
+    } else {
+      // Remove sensitive data before login
+      user.password = undefined;
+      user.salt = undefined;
+
+      req.login(user, function(err) {
+        if (err) {
+          res.status(400).send(err);
+        } else {
+          res.json(user);
+        }
+      });
+    }
+  });
+};
+
 exports.signout=(req,res)=>{
     req.logout();
     res.redirect('/');
 };
+
+
 exports.create=(req,res,next)=>{
     const user=new User(req.body);
     user.save((err)=>{
