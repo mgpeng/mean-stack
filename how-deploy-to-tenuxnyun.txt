@@ -46,3 +46,9 @@ tenxunyun>
        npm install
        node server.js
        browser> tenxunyun-public-ip:3000  as 123.206.106.64:3000
+
+push difference branch to github>
+       cd mean-stack
+       git checkout -b systemjs-version
+       git push ongithub systemjs-version
+       
