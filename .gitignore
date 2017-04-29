@@ -2,5 +2,4 @@
 npm-debug.log
 
 # Local development
-*.txt
 .DS_Store
