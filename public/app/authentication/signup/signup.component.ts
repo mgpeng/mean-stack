@@ -5,7 +5,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { LoggerService } from '../logger.service';
 @Component({
   selector: 'signup',
-  templateUrl: 'app/authentication/signup/signup.component.html',
+  templateUrl: './signup.component.html',
   providers:[LoggerService]
 })
 export class SignupComponent {

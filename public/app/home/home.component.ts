@@ -3,7 +3,7 @@ import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'home',
-  templateUrl: 'app/home/home.component.html'
+  templateUrl: './home.component.html'
 })
 export class HomeComponent {
   user: any;

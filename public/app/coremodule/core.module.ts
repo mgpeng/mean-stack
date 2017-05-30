@@ -8,7 +8,7 @@ import { ArticlesService } from '../services/articles.service';
     imports:[],
     declarations:[],
     providers:[
-                AuthenticationService,
+                // AuthenticationService,
                 ArticlesService
                 ]
 })

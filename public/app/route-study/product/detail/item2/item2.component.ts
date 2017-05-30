@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TestService } from '../../test.service';
 @Component({
-  moduleId: module.id,
+  // moduleId: module.id,
   selector: 'my-product-detail-item2',
   template: `
     <div>The route is "product/detail/item2".</div>

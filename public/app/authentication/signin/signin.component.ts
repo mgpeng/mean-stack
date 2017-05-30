@@ -5,7 +5,7 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { LoggerService } from '../logger.service';
 @Component({
   selector: 'signin',
-  templateUrl: 'app/authentication/signin/signin.component.html'
+  templateUrl: './signin.component.html'
 })
 export class SigninComponent {
   errorMessage: string;

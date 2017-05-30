@@ -1,4 +1,1 @@
-exports.config = {
-  specs: ['public/tests/e2e/**/*.js'],
-  useAllAngular2AppRoots: true
-}
+module.exports = require('./generic-config/protractor.conf.js');

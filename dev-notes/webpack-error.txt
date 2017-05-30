@@ -1,0 +1,175 @@
+Webpack using errors list
+
+1) Using webpack compile error,
+ERROR in [at-loader] ./public/app/route-study/product/detail/detail.component.ts:13:14 
+[0]     TS1219: Experimental support for decorators is a feature that is subject to change 
+in a future release. Set the 'experimentalDecorators' option to remove this warning.
+
+Solution: (doesn't work sometime, did work somethime)
+   a) find vscode preference-> setting -> user.setting 
+   b) set in file :
+         "typescript.tsdk": "/usr/local/lib/node_modules/typescript/lib"
+   c) restart vs code and run terminal compile again
+
+********************************************************************************************
+2)After webpack compiled, run show error in browser
+compiler.es5.js:14582 Uncaught Error: Can't resolve all parameters for ArticlesService: (?).
+    at syntaxError (http://localhost:3000/build/vendor.js:42432:34) [<root>]
+    at CompileMetadataResolver._getDependenciesMetadata (http://localhost:3000/build/vendor.js:55282:35) [<root>]
+    at CompileMetadataResolver._getTypeMetadata (http://localhost:3000/build/vendor.js:55150:26) [<root>]
+    at CompileMetadataResolver._getInjectableMetadata (http://localhost:3000/build/vendor.js:55136:21) [<root>]
+    at CompileMetadataResolver.getProviderMetadata (http://localhost:3000/build/vendor.js:55425:40) [<root>]
+    at http://localhost:3000/build/vendor.js:55355:49 [<root>]
+    at Array.forEach (native) [<root>]
+    at CompileMetadataResolver._getProvidersMetadata (http://localhost:3000/build/vendor.js:55316:19) [<root>]
+    at CompileMetadataResolver.getNgModuleMetadata (http://localhost:3000/build/vendor.js:54971:50) [<root>]
+    at CompileMetadataResolver.getNgModuleSummary (http://localhost:3000/build/vendor.js:54824:52) [<root>]
+    at http://localhost:3000/build/vendor.js:54897:72 [<root>]
+    at Array.forEach (native) [<root>]
+    at CompileMetadataResolver.getNgModuleMetadata (http://localhost:3000/build/vendor.js:54882:49) [<root>]
+    at JitCompiler._loadModules (http://localhost:3000/build/vendor.js:66063:64) [<root>]
+
+
+********************************************************************************************
+3)After webpack compiled, run show error in browser
+Hash: 691286602095ed69fa0d
+[0] Version: webpack 2.2.1
+[0] Time: 87ms
+[0]            Asset       Size  Chunks             Chunk Names
+[0]     bootstrap.js  283 bytes       1  [emitted]  bootstrap
+[0] bootstrap.js.map   89 bytes       1  [emitted]  bootstrap
+[0]  [676] ./public/bootstrap.js 157 bytes {1} [built] [failed] [1 error]
+[0]  [677] ./public/polyfills.js 157 bytes {2} [built] [failed] [1 error]
+[0]  [678] ./public/vendor.js 154 bytes {0} [built] [failed] [1 error]
+[0] 
+[0] ERROR in ./public/polyfills.js
+[0] Module build failed: Error: ENOENT: no such file or directory, open '/Users/apple/Documents/xixijiu_ng-md/mean-stack/public/polyfills.js'
+[0] 
+[0] ERROR in ./public/vendor.js
+[0] Module build failed: Error: ENOENT: no such file or directory, open '/Users/apple/Documents/xixijiu_ng-md/mean-stack/public/vendor.js'
+[0] 
+[0] ERROR in ./public/bootstrap.js
+[0] Module build failed: Error: ENOENT: no such file or directory, open '/Users/apple/Documents/xixijiu_ng-md/mean-stack/public/bootstrap.js
+
+
+****************************************************************************************************
+4) compiled error because of webpack.config.js 
+   ERROR:
+      ERROR in [at-loader] ./node_modules/@angular/core/src/change_detection/differs/iterable_differs.d.ts:15:48 
+[0]     TS2304: Cannot find name 'Iterable'.
+[0] 
+[0] ERROR in [at-loader] ./node_modules/@types/core-js/index.d.ts:47:36 
+[0]     TS2304: Cannot find name 'Iterable'.
+[0] 
+[0] ERROR in [at-loader] ./node_modules/@types/core-js/index.d.ts:350:48 
+[0]     TS2304: Cannot find name 'PropertyKey'.
+........more same errors............... 
+
+[0] ERROR in [at-loader] ./public/app/app-routing.module.ts:19:14 
+[0]     TS1219: Experimental support for decorators is a feature that is subject to change in a future release. Set the 'experimentalDecorators' option to remove this warning.
+[0] 
+[0] ERROR in [at-loader] ./public/app/app.component.ts:13:14 
+[0]     TS1219: Experimental support for decorators is a feature that is subject to change in a future release. Set the 'experimentalDecorators' option to remove this warning.
+[0] 
+...........more same errors..............
+-----------------------
+reasons:
+     {
+        test: /\.ts$/,
+        loaders: [
+          {
+            loader: 'awesome-typescript-loader',
+            options: { configFileName: helpers.root('public', 'tsconfig.json') }  <==== ERROR 
+          } , 'angular2-template-loader'
+        ]
+      },
+
+      tsconfig.json doesn't exist in public folder
+
+*************************************************************************************
+5) webpack bundles put before body tag in 'index.ejs'
+    IF:
+        <!DOCTYPE html>
+        <html>
+        <head>
+        ....
+        <!-- using webpack  -->
+            <script src="build/polyfills.js"></script>
+            <script src="build/vendor.js"></script>
+            <script src="build/main.js"></script>
+        </head>
+        <body>
+        ....
+        </body>
+        </html>
+
+  ERROR:
+    AppComponent_Host.html:1 ERROR CONTEXT DebugContext_ {view: Object, nodeIndex: 0, nodeDef: Object, elDef: Object, elView: Object}
+    View_AppComponent_Host_0 @ AppComponent_Host.html:1
+    proxyClass @ compiler.es5.js:13572
+    DebugContext_.logError @ core.es5.js:12953
+    ErrorHandler.handleError @ core.es5.js:1149
+    (anonymous) @ core.es5.js:4660
+    ZoneDelegate.invoke @ zone.js:365
+    onInvoke @ core.es5.js:4125
+    ZoneDelegate.invoke @ zone.js:364
+    Zone.run @ zone.js:125
+    (anonymous) @ zone.js:758
+    ZoneDelegate.invokeTask @ zone.js:398
+    onInvokeTask @ core.es5.js:4116
+    ZoneDelegate.invokeTask @ zone.js:397
+    Zone.runTask @ zone.js:165
+    drainMicroTaskQueue @ zone.js:591
+    zone.js:567 Unhandled Promise rejection: The selector "app" did not match any elements ; Zone: <root> ; Task: Promise.then ; Value: Error: The selector "app" did not match any elements
+        at DefaultDomRenderer2.selectRootElement (http://localhost:3000/build/vendor.js:28426:19) [angular]
+        at DebugRenderer2.selectRootElement (http://localhost:3000/build/vendor.js:13766:49) [angular]
+        at createElement (http://localhost:3000/build/vendor.js:9934:23) [angular]
+        at createViewNodes (http://localhost:3000/build/vendor.js:12537:44) [angular]
+        at createRootView (http://localhost:3000/build/vendor.js:12484:5) [angular]
+        at callWithDebugContext (http://localhost:3000/build/vendor.js:13615:42) [angular]
+        at Object.debugCreateRootView [as createRootView] (http://localhost:3000/build/vendor.js:13076:12) [angular]
+        at ComponentFactory_.create (http://localhost:3000/build/vendor.js:10420:46) [angular]
+        at ComponentFactoryBoundToModule.create (http://localhost:3000/build/vendor.js:4029:29) [angular]
+        at ApplicationRef_.bootstrap (http://localhost:3000/build/vendor.js:5611:57) [angular]
+        at http://localhost:3000/build/vendor.js:5398:79 [angular]
+        at Array.forEach (native) [angular]
+        at PlatformRef_._moduleDoBootstrap (http://localhost:3000/build/vendor.js:5398:42) [angular]
+        at http://localhost:3000/build/vendor.js:5360:27 [angular] Error: The selector "app" did not match any elements
+        at DefaultDomRenderer2.selectRootElement (http://localhost:3000/build/vendor.js:28426:19) [angular]
+        at DebugRenderer2.selectRootElement (http://localhost:3000/build/vendor.js:13766:49) [angular]
+        at createElement (http://localhost:3000/build/vendor.js:9934:23) [angular]
+        at createViewNodes (http://localhost:3000/build/vendor.js:12537:44) [angular]
+        at createRootView (http://localhost:3000/build/vendor.js:12484:5) [angular]
+        at callWithDebugContext (http://localhost:3000/build/vendor.js:13615:42) [angular]
+        at Object.debugCreateRootView [as createRootView] (http://localhost:3000/build/vendor.js:13076:12) [angular]
+        at ComponentFactory_.create (http://localhost:3000/build/vendor.js:10420:46) [angular]
+        at ComponentFactoryBoundToModule.create (http://localhost:3000/build/vendor.js:4029:29) [angular]
+        at ApplicationRef_.bootstrap (http://localhost:3000/build/vendor.js:5611:57) [angular]
+        at http://localhost:3000/build/vendor.js:5398:79 [angular]
+        at Array.forEach (native) [angular]
+        at PlatformRef_._moduleDoBootstrap (http://localhost:3000/build/vendor.js:5398:42) [angular]
+        at http://localhost:3000/build/vendor.js:5360:27 [angular]
+
+Solution:
+        <!DOCTYPE html>
+        <html>
+        <head>
+        ....
+        </head>
+        <body>
+        ....
+        </body>
+          <!-- using webpack  -->
+            <script src="build/polyfills.js"></script>
+            <script src="build/vendor.js"></script>
+            <script src="build/main.js"></script>
+        </html>
+
+    OR:
+            <!-- using webpack  -->
+            <script src="build/polyfills.js"></script>
+            <script src="build/vendor.js"></script>
+            <script src="build/main.js"></script>
+         </body>
+        </html>
+****************************************************************************

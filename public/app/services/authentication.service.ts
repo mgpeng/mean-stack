@@ -1,5 +1,4 @@
-// import {Observable} from 'rxjs/operator/Observa';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject} from '@angular/core';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
@@ -9,8 +8,8 @@ export class AuthenticationService {
 
   private _signinURL = 'api/auth/signin';
   private _signupURL = 'api/auth/signup';
-
-  constructor (private http: Http) {  }
+  
+  constructor (private http: Http) { }
   isLoggedIn(): boolean {
     return (!!this.user);
   }
@@ -36,8 +35,6 @@ export class AuthenticationService {
   }
 
   private handleError(error: Response) {
-    // console.error(error);
-    console.log(error);
     return Observable.throw(error.json().message || 'Server error');
   }
 }
