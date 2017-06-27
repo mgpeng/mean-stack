@@ -3,10 +3,12 @@ import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path:'route-study',component:RouteStudyComponent},
-  { path: 'rshome', loadChildren: './app/route-study/rshome.module#RSHomeModule' },
-  { path: 'product', loadChildren: './app/route-study/product/product.module#ProductModule' },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
+  { path:'route-study',
+    component:RouteStudyComponent,
+    children:[
+        { path: 'rshome', loadChildren: './rshome.module#RSHomeModule' },
+        { path: 'product', loadChildren: './product/product.module#ProductModule' },
+    ]}
 ];
 
 @NgModule({
@@ -14,3 +16,6 @@ const routes: Routes = [
   exports: [ RouterModule ]
 })
 export class RouteStudyRoutingModule {}
+
+// ,
+//   { path: '**', redirectTo: '', pathMatch: 'full' },

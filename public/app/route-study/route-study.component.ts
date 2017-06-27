@@ -1,4 +1,4 @@
-import { Component }          from '@angular/core';
+import { Component }  from '@angular/core';
 
 @Component({
   // moduleId: module.id,
@@ -7,7 +7,7 @@ import { Component }          from '@angular/core';
     <nav>
       <a routerLink="/rshome" routerLinkActive="active">rshome</a>
       <a routerLink="/product" routerLinkActive="active">product</a>
-      <a routerLink="/product/list" routerLinkActive="active">product/list</a>
+      <a routerLink="/list" routerLinkActive="active">product/list</a>
       <a routerLink="/product/detail" routerLinkActive="active">product/detail</a>
       <a routerLink="/product/detail/item" routerLinkActive="active">product/detail/item</a>
       <a routerLink="/product/detail/item2" routerLinkActive="active">product/detail/item2</a>

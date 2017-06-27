@@ -10,4 +10,4 @@ import { RSHomeComponent }         from './rshome.component';
   declarations: [RSHomeComponent],
   providers: [ ]
 })
-export class HomeModule { }
+export class RSHomeModule { }

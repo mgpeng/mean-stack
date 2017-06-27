@@ -173,3 +173,20 @@ Solution:
          </body>
         </html>
 ****************************************************************************
+6) set socket.io-client in webpack's vendor.ts
+   in app's component use socket.io-client like:
+     Firstly, import * as io from 'socket.io-client';
+     and then ,  ... this.socket = io(); ...
+   in vendor.ts:
+      no use import it, socket.io-client is in main.js
+      using "import  'socket.io-client';"  socket.io-client is in verndor.js
+
+   someone use 
+        new ProvidePlugin({
+            io: 'socket.io-client',
+            feathers: 'feathers-client'
+        })
+   in my case, don't need.
+   by the way, have npm install @types/socket.io-client
+******************************************************************************
+7)Use html-webpack-plugin append files endless in index.ejs when index.ejs outside build folder

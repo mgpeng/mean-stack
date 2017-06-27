@@ -3,6 +3,7 @@ import { NgModule }      from '@angular/core';
 import { DetailRouterModule } from './detail.router.module';
 import { DetailComponent }    from './detail.component';
 
+
 @NgModule({
   imports: [
     DetailRouterModule

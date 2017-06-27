@@ -3,15 +3,15 @@
     <h1>Hello {{user.firstName}}</h1>
   <a href="/api/auth/signout">Signout</a>
   <ul>
-  <!--  <li><a [routerLink]="['/articles']">List Articles</a></li>
+   <li><a [routerLink]="['/articles']">List Articles</a></li>
     <li><a [routerLink]="['/articles/create']">Create Article</a></li>
-    <li><a [routerLink]="['/chat']">Chat</a></li>  -->
+    <li><a [routerLink]="['/chat']">Chat</a></li> 
   </ul>
 </div>
 
-<!-- <div *ngIf="!user">
+ <div *ngIf="!user">
   <a [routerLink]="['/authentication/signup']">Signup</a>
   <a [routerLink]="['/authentication/signin']">Signin</a>
-</div>  -->
+</div>  
 <router-outlet></router-outlet>
 

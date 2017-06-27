@@ -11,14 +11,15 @@ module.exports = {
     'vendor': './public/vendor',
     'main': './public/main'
   },
-  devtool: 'source-map',
+  // devtool: 'source-map',
+  devtool: 'inline-source-map',
+  stats:'verbose',
   resolve: {
     extensions: [ '.js', '.ts']
   },
   output: {
     path: 'public/build',
-    filename: '[name].js',
-    publicPath: '/'
+    filename: '[name].[hash].js'
   },
   module: {
     rules: [
@@ -28,7 +29,7 @@ module.exports = {
           {
             loader: 'awesome-typescript-loader',
             options: { configFileName: helpers.root('public', 'tsconfig.json') }
-          } , 'angular2-template-loader'
+          } , 'angular2-template-loader','angular2-router-loader'
         ]
       },
       {
@@ -39,11 +40,11 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
         loader: 'file-loader?name=assets/[name].[hash].[ext]'
       },
-      {
-        test: /\.css$/,
-        exclude: helpers.root('public', 'app'),
-        loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader?sourceMap' })
-      },
+      // {
+      //   test: /\.css$/,
+      //   exclude: helpers.root('public', 'app'),
+      //   loader: ExtractTextPlugin.extract({ fallbackLoader: 'style-loader', loader: 'css-loader?sourceMap' })
+      // },
       {
         test: /\.css$/,
         include: helpers.root('public', 'app'),
@@ -59,11 +60,12 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: ['bootstrap', 'vendor', 'polyfills']
     }),
-    // new HtmlWebpackPlugin({
-    //   filename: './app/views/index.ejs',
-    //   template: './app/views/index.ejs',
-    //   inject: true
-    // }),
+    new HtmlWebpackPlugin({
+      filename:'../../app/views/index.ejs',
+      template: './app/views/index.ejs',
+      inject: true
+    }),
+    // new ExtractTextPlugin("style.css"),
     new webpack.ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
         // /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,

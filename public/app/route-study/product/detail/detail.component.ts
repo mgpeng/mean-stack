@@ -13,3 +13,5 @@ import { Component } from '@angular/core';
 export class DetailComponent {constructor(){
     console.log('inside DetailComponent');
   }}
+
+  // 
