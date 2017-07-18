@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/">
+    <title><%= title %></title>
+    <script type="text/javascript">
+      window.user=<%- user || 'null' %>;
+    </script>
+  </head>
+  <body>
+    <app>
+      <h1>Loading...</h1>
+    </app>
+       <h1><%= subtitle %></h1>
+         <% if(userFullName){ %> 
+          <h2>Hello <%= userFullName %></h2>
+          <a href="/signout">Signout</a>
+          <% } else { %> 
+                <a href="/signup">Signup</a>
+                <a href="/signin">Signin</a>
+          <% } %>
+          <br/>
+          <img src="img/logo.png" alt="logo"/>  
+<script type="text/javascript" src="build/polyfills.ceb83b66d4f9d6f17cde.js"></script><script type="text/javascript" src="build/vendor.ceb83b66d4f9d6f17cde.js"></script><script type="text/javascript" src="build/main.ceb83b66d4f9d6f17cde.js"></script></body>
+</html>

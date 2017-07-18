@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   template: `
     <div>The route is "product/detail".</div>
     <div style="background:green">
-    <router-outlet name="detail"></router-outlet>
+       <router-outlet name="detail"></router-outlet>
     </div>
   `
 })

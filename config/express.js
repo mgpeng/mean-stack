@@ -37,7 +37,8 @@ module.exports = (db)=>{
         store:mongoStore
     }))
 
-    app.set('views','./app/views');
+    // app.set('views','./app/views');
+    app.set('views','./public/build');
     app.set('view engine','ejs');
     
     app.use(flash());

@@ -190,3 +190,341 @@ Solution:
    by the way, have npm install @types/socket.io-client
 ******************************************************************************
 7)Use html-webpack-plugin append files endless in index.ejs when index.ejs outside build folder
+  I have file structure:
+ ```
+      app
+        |--controllers
+        |--models
+        |--routes
+        |--views
+               |--index.ejs
+               |--signin.ejs
+      config  <---  config for mongodb express and so on
+      public
+           |--app   <---- main client ts files using angular 2
+           |--build <---- bundles in this folder,but it is empty before run webpack
+           main.ts
+           polyfills.ts
+           vendor.ts
+      webpack.config.js
+      package.json
+      ...
+```
+webpack.config.js like:
+    
+ ```
+...
+         entry: {
+                'polyfills': './public/polyfills',
+                'vendor': './public/vendor',
+                'main': './public/main'
+        },
+        ...
+        output: {
+            path: 'public/build',
+            filename: '[name].js'
+        },
+        ...
+         plugins: [
+             ...
+                new HtmlWebpackPlugin({
+                filename:'../../app/views/index.ejs',
+                template: './app/views/index.ejs',
+                inject: true
+                }),
+         ...
+```
+I want to use html-webpack-plugin append bundles (main.js, polyfills.js and vendor.js) in index.ejs which is in app/views folder.
+
+ After run webpack, webpack append bundles in app/views/index.ejs endless:
+    A) **ERROR : terminal show as**
+
+ ```
+[at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 1.124 sec.
+        [0] Hash: 9ee19a16cc5fbd5a5a4f
+        [0] Version: webpack 2.2.1
+        [0] Time: 35439ms
+        [0]                     Asset     Size  Chunks                    Chunk Names
+        [0]                      0.js  12.8 kB       0  [emitted]         
+        [0]                 vendor.js  8.32 MB       1  [emitted]  [big]  vendor
+        [0]                   main.js   142 kB       2  [emitted]         main
+        [0]                      3.js  7.67 kB       3  [emitted]         
+        [0]                      4.js  8.02 kB       4  [emitted]         
+        [0]                      5.js  8.49 kB       5  [emitted]         
+        [0]                      6.js  9.74 kB       6  [emitted]         
+        [0]              polyfills.js   771 kB       7  [emitted]  [big]  polyfills
+        [0] ../../app/views/index.ejs  1.62 kB          [emitted]         
+        [0]   [16] ./~/@angular/router/@angular/router.es5.js 210 kB {1} [built]
+        [0]   [35] ./~/@angular/common/@angular/common.es5.js 131 kB {1} [built]
+        [0]   [42] ./~/@angular/platform-browser/@angular/platform-browser.es5.js 142 kB {1} [built]
+        [0]   [56] ./~/@angular/forms/@angular/forms.es5.js 204 kB {1} [built]
+        [0]   [73] ./~/@angular/http/@angular/http.es5.js 72.7 kB {1} [built]
+        [0]   [92] ./~/@angular/platform-browser-dynamic/@angular/platform-browser-dynamic.es5.js 6.09 kB {1} [built]
+        [0]  [131] ./~/@angular/compiler/@angular/compiler.es5.js 967 kB {1} [built]
+        [0]  [132] ./~/socket.io-client/lib/index.js 2.17 kB {1} [built]
+        [0]  [232] ./public/app/app.module.ts 2.24 kB {2} [built]
+        [0]  [233] ./~/core-js/es6/array.js 944 bytes {7} [built]
+        [0]  [235] ./~/core-js/es6/map.js 207 bytes {7} [built]
+        [0]  [250] ./~/zone.js/dist/zone.js 96 kB {7} [built]
+        [0]  [690] ./public/main.ts 302 bytes {2} [built]
+        [0]  [691] ./public/polyfills.ts 1.04 kB {7} [built]
+        [0]  [692] ./public/vendor.ts 432 bytes {1} [built]
+        [0]     + 694 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 1.49 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.002 sec.
+        [0] Hash: 9856aaee802ea59e23ab
+        [0] Version: webpack 2.2.1
+        [0] Time: 554ms
+        [0]                     Asset     Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  1.84 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 1.73 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.001 sec.
+        [0] Hash: 2b7959dab003c7ad9619
+        [0] Version: webpack 2.2.1
+        [0] Time: 330ms
+        [0]                     Asset     Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  2.07 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 1.97 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.002 sec.
+        [0] Hash: bcd379989c08f4cfd83d
+        [0] Version: webpack 2.2.1
+        [0] Time: 233ms
+        [0]                     Asset    Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  2.3 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 2.21 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.002 sec.
+        [0] Hash: 6d9bc816b6e1bd59d359
+        [0] Version: webpack 2.2.1
+        [0] Time: 223ms
+        [0]                     Asset     Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  2.52 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 2.45 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.001 sec.
+        [0] Hash: 86eca95ea912d1bf8b45
+        [0] Version: webpack 2.2.1
+        [0] Time: 203ms
+        [0]                     Asset     Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  2.75 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 2.68 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.002 sec.
+        [0] Hash: a9c45953ad8ef1d871d2
+        [0] Version: webpack 2.2.1
+        [0] Time: 216ms
+        [0]                     Asset     Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  2.97 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 2.92 kB {0} [built]
+        [0] 
+        [0] [at-loader] Checking started in a separate process...
+        [0] 
+        [0] [at-loader] Ok, 0.002 sec.
+        [0] Hash: 9c60072b592a7263ad91
+        [0] Version: webpack 2.2.1
+        [0] Time: 204ms
+        [0]                     Asset    Size  Chunks             Chunk Names
+        [0] ../../app/views/index.ejs  3.2 kB          [emitted]  
+        [0]  [231] ./public async 160 bytes {1} [built]
+        [0]     + 708 hidden modules
+        [0] Child html-webpack-plugin for "../../app/views/index.ejs":
+        [0]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index.ejs 3.16 kB {0} [built]
+
+        ^C  <-----  I HAVE TO FORCE TO STOP IT !
+```
+
+B) **ERROR : app/views/index.ejs files changed from:**
+
+```
+<!DOCTYPE html>
+        <html>
+        <head>
+            <base href="/">
+            <title><%= title %></title>
+            <script type="text/javascript">
+            window.user=<%- user || 'null' %>;
+            </script>
+        </head>
+        <body>
+            <app>
+            <h1>Loading...</h1>
+            </app>
+            <h1><%= subtitle %></h1>
+                <% if(userFullName){ %> 
+                <h2>Hello <%= userFullName %></h2>
+                <a href="/signout">Signout</a>
+                <% } else { %> 
+                        <a href="/signup">Signup</a>
+                        <a href="/signin">Signin</a>
+                <% } %>
+                <br/>
+                <img src="img/logo.png" alt="logo"/>  
+        </body>
+        </html>
+```
+ To:
+
+ ```
+         ...
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        <script type="text/javascript" src="../../public/build/polyfills.js"></script>
+        <script type="text/javascript" src="../../public/build/vendor.js"></script>
+        <script type="text/javascript" src="../../public/build/main.js"></script>
+        </body>
+        ....
+```
+C) **NO ERROR :  inside public/build bundle files is correct**
+```
+            public
+                |----build
+                            |-- 0.js   
+                            |--3.js
+                            |--4.js      
+                            |--5.js      
+                            |--6.js
+                            |--polyfills.js
+                            |--vendor.js
+                            |--main.js
+```
+I changed webpack.config.js
+```
+             plugins: [
+             ...
+                new HtmlWebpackPlugin({
+                filename:'./app/views/index.ejs',
+                ...
+                }),
+         ...
+```
+index.ejs compiled in public/build/app/views/index.ejs
+I changed webpack.config.js again
+```
+             plugins: [
+             ...
+                new HtmlWebpackPlugin({
+                filename:'../app/views/index.ejs',
+                 ...
+                }),
+         ...
+```
+index.ejs compiled in public/app/views/index.ejs, this is what I want.
+
+
+Solution:
+    changed only expressjs config:
+       ...
+       //--- app.set('views','./app/views');
+        app.set('views','./public/build');  <---changed to find views/index.ejs to public/build/index.ejs
+        app.set('view engine','ejs');
+       ...
+
+    changed webpack.config.js
+       ...
+       output: {
+            path: 'public/build',
+            filename: '[name].[hash].js',
+            publicPath: 'build'   <---- set build/ before output bundles
+        },
+       ...
+
+    so get build :
+    public/build/vendor.[hash].js
+    public/build/main.[hash].js
+    public/build/polyfills.[hash].js
+    public/build/index.ejs
+
+    and index.ejs like:
+       ...
+        <script type="text/javascript" src="build/polyfills.ae8a9abf8bb75b4c7a2f.js"></script>
+        <script type="text/javascript" src="build/vendor.ae8a9abf8bb75b4c7a2f.js"></script>
+        <script type="text/javascript" src="build/main.ae8a9abf8bb75b4c7a2f.js"></script>
+        </body>
+       ...
+    Now everything is fine.
+********************************************************************************************
+8) angular route config use lazy loading setting by 'loadChildren', when angular loading
+   those chunks which separate from main.js got Error: Loading chund <id> failed.
+
+   webpack.config.js
+       ...
+       output: {
+            path: 'public/build',
+            filename: '[name].js',
+            chunkFilename: "[name].chunk.js",
+            publicPath: 'build'   <=== ERROR here
+        },
+        ...
+
+    found in polyfills.js
+        // __webpack_public_path__
+     	__webpack_require__.p = "build";
+    and in terminal 
+        GET build1.chunk.js   <=== path error 
+    so changed webpack.config.js
+       ...
+       output: {
+            path: 'public/build',
+            filename: '[name].js',
+            chunkFilename: "[name].chunk.js",
+            publicPath: 'build/'   <=== changed here
+        },
+        ...
+
+    and get in polyfills.js
+        // __webpack_public_path__
+     	__webpack_require__.p = "build/";
+
+    so it is clear everything like charm!

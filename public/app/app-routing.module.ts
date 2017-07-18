@@ -6,7 +6,6 @@ import { RouteStudyComponent } from './route-study/route-study.component';
 export const AppRoutes: Routes = [
   {
     path:'',
-    // redirectTo:'route-study',
     redirectTo:'home',
     pathMatch:'full'
   }
@@ -18,12 +17,4 @@ export const AppRoutes: Routes = [
 })
 export class AppRoutingModule {}
 
- // {
-  //   path:'home',
-  //   loadChildren:'app/home/home.module#HomeModule'
-  // },
-  // {
-  //   path:'authentication',
-  //   loadChildren:'app/authentication/authentication.module#AuthenticationModule'
-  // },
   

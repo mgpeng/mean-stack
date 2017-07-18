@@ -4,8 +4,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { DetailComponent }       from './detail.component';
 
 const routes: Routes = [
-  { path: 'item',component: DetailComponent,
-    outlet: 'detail',  loadChildren: './item/item.module#ItemModule' },
+  { path: 'item',
+    // outlet: 'detail',  
+    loadChildren: './item/item.module#ItemModule' },
   { path: '',  component: DetailComponent }
 ];
 

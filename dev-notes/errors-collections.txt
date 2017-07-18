@@ -617,7 +617,7 @@ below collections is under ng4
 
 This is collections of all kinds of errors and solutions.
 **********************************************************************************************
-1) templateUrl url set cause errors
+32) templateUrl url set cause errors
    ERRORS:
             Unhandled Promise rejection: Template parse errors:
             'app' is not a known element:
@@ -651,7 +651,7 @@ Solution:
    A) set absolute Url for templateUrl
    B) templateUrl relative url start with './'
 **********************************************************************************************
-2) comment templateUrl line inside @Component
+33) comment templateUrl line inside @Component
    ERRORS:
             Error: (SystemJS) No template specified for component AuthenticationComponent
             Error: No template specified for component AuthenticationComponent
@@ -676,10 +676,10 @@ Solution:
     Solution:
          delete comment templateUrl, error disappear.
 ************************************************************************************************
-3) singleton service for whole app setting position
+34) singleton service for whole app setting position
    from ng4 use core module set in root module
 ************************************************************************************************
-4) Set module scope service always error :  no provider for ArticlesService
+35) Set module scope service always error :  no provider for ArticlesService
     ERROR Error: Uncaught (in promise): Error: No provider for ArticlesService!
     
      set a) module.ts file articles.component can get service, other components can't 
@@ -691,7 +691,7 @@ Solution:
      It is bad solution I know, no choice untill now.
      Guess: ng 4.0.1 or 4.0.2 have bug? or new design pattern?
 ********************************************************************************************
-5) Error:
+36) Error:
     Error: (SystemJS) Unexpected token <
 	SyntaxError: Unexpected token <
 	    at eval (<anonymous>)
@@ -725,7 +725,7 @@ var packages = {
   };
 And install @type/socket.io-client  for typescript define type
 *******************************************************************************************
-5) Karma test use Phanotmjs browser get Error:
+37) Karma test use Phanotmjs browser get Error:
         25 04 2017 20:22:04.835:INFO [karma]: Karma v1.6.0 server started at http://0.0.0.0:9876/
         25 04 2017 20:22:04.881:INFO [launcher]: Launching browser PhantomJS with unlimited concurrency
         25 04 2017 20:22:04.974:INFO [launcher]: Starting browser PhantomJS
@@ -834,3 +834,401 @@ Solution:
     del system-angular-loader.js in system.config.js
     set templateUrl to absolute URL
 *******************************************************************************************
+38) routerLink and router path setting error 
+   ERROR as :
+    core.es5.js:1084 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'product'
+    Error: Cannot match any routes. URL Segment: 'product'
+    at ApplyRedirects.noMatchError (router.es5.js:1321) [angular]
+    at CatchSubscriber.selector (router.es5.js:1296) [angular]
+    at CatchSubscriber.error (catch.js:53) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at LastSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at LastSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MergeAllSubscriber.OuterSubscriber.notifyError (OuterSubscriber.js:22) [angular]
+    at InnerSubscriber._error (InnerSubscriber.js:26) [angular]
+    at InnerSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at ApplyRedirects.noMatchError (router.es5.js:1321) [angular]
+    at CatchSubscriber.selector (router.es5.js:1296) [angular]
+    at CatchSubscriber.error (catch.js:53) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at LastSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at LastSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MergeAllSubscriber.OuterSubscriber.notifyError (OuterSubscriber.js:22) [angular]
+    at InnerSubscriber._error (InnerSubscriber.js:26) [angular]
+    at InnerSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at resolvePromise (zone.js:710) [angular]
+    at resolvePromise (zone.js:681) [angular]
+    at :3000/build/polyfills.js:4642:17 [angular]
+    at Object.onInvokeTask (core.es5.js:4116) [angular]
+    at drainMicroTaskQueue (zone.js:591) [<root>]
+    at HTMLAnchorElement.ZoneTask.invoke (zone.js:464) [<root>]
+    at ____________________Elapsed_3_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_0_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/polyfills.js:4536:33 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_1_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/vendor.js:19244:25 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_0_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at ZoneAwarePromise.then (zone.js:845) [angular]
+    at :3000/build/vendor.js:19220:18 [angular]
+    at new ZoneAwarePromise (zone.js:774) [angular]
+    at Router.runNavigate (router.es5.js:3946) [angular]
+    at :3000/build/vendor.js:19098:51 [angular]
+    at ____________________Elapsed_3_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at ZoneAwarePromise.then (zone.js:845) [angular]
+    at Router.executeScheduledNavigation (router.es5.js:3915) [angular]
+    at MergeMapSubscriber.project (router.es5.js:3858) [angular]
+    at MergeMapSubscriber._tryNext (mergeMap.js:120) [angular]
+    at MergeMapSubscriber._next (mergeMap.js:110) [angular]
+    at ____________________Elapsed_2353_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at zoneAwareAddListener (zone.js:1450) [angular]
+    at HTMLAnchorElement.addEventListener (eval at createNamedFn (zone.js:1584), <anonymous>:3:43) [angular]
+    at DomEventsPlugin.addEventListener (platform-browser.es5.js:3083) [angular]
+    at EventManager.addEventListener (platform-browser.es5.js:2429) [angular]
+    at DefaultDomRenderer2.listen (platform-browser.es5.js:2942) [angular]
+    at DebugRenderer2.listen (core.es5.js:13277) [angular]
+    at ____________________Elapsed_14_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4642:17 [angular]
+    at Object.onInvokeTask (core.es5.js:4116) [angular]
+    at ____________________Elapsed_9_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/polyfills.js:4713:25 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_1_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at ZoneAwarePromise.then (zone.js:845) [angular]
+    at Function.ZoneAwarePromise.all (zone.js:825) [angular]
+    at JitCompiler._loadModules (compiler.es5.js:25142) [angular]
+    at JitCompiler._compileModuleAndComponents (compiler.es5.js:25093) [angular]
+    at JitCompiler.compileModuleAsync (compiler.es5.js:25055) [angular]
+    at ____________________Elapsed_2_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/main.js:1096:172 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+
+Checking:
+    A)router config, no wrong sign:
+       const routes: Routes = [
+            { path:'route-study',
+                component:RouteStudyComponent,
+                children:[
+                    { path: '',loadChildren: './rshome/rshome.module#RSHomeModule' },
+                    { path: 'product', loadChildren: './product/product.module#ProductModule' },
+                ]
+            },
+            ];
+    B)routerLink setting, no wrong sign:
+         <nav>
+            <a routerLink="/rshome" routerLinkActive="active">rshome</a>
+            <a routerLink="/product" routerLinkActive="active">product</a>
+            <a routerLink="/list" routerLinkActive="active">product/list</a>
+            <a routerLink="/product/detail" routerLinkActive="active">product/detail</a>
+            <a routerLink="/product/detail/item" routerLinkActive="active">product/detail/item</a>
+            <a routerLink="/product/detail/item2" routerLinkActive="active">product/detail/item2</a>
+        </nav>
+        <router-outlet></router-outlet>
+    C)route-study child module product, no wrong also:
+       route config:
+           const routes: Routes = [
+            { path: 'list', component:ProductComponent,
+                outlet:'product', loadChildren: './list/list.module#ListModule' },
+            { path: 'detail',  component: ProductComponent, 
+                outlet:'detail', loadChildren: './detail/detail.module#DetailModule' },
+            { path: 'detail/item2',  component: ProductComponent, 
+                outlet:'detail', loadChildren: './detail/item2/item2.module#Item2Module' },
+            { path: '',  component: ProductComponent }
+            ];
+Double checking:
+      found hover mouse on product routerLink in browser, url show is "localhost:3000/product"
+      but "product" is child of route-study, so the correct url should be "localhost:3000/
+      /route-study/product",this is result of error.
+Solution:
+     A) routerLink setting should be include "route-study"
+         <nav>
+            <a routerLink="/rshome" routerLinkActive="active">rshome</a>
+            <a routerLink="/product" routerLinkActive="active">product</a>
+            <a routerLink="/list" routerLinkActive="active">product/list</a>
+            <a routerLink="/product/detail" routerLinkActive="active">product/detail</a>
+            <a routerLink="/product/detail/item" routerLinkActive="active">product/detail/item</a>
+            <a routerLink="/product/detail/item2" routerLinkActive="active">product/detail/item2</a>
+        </nav>
+        <router-outlet></router-outlet>
+    B) better way is :
+        <nav>
+            <a routerLink="rshome" routerLinkActive="active">rshome</a>
+            <a routerLink="product" routerLinkActive="active">product</a>
+        ...
+        this way is because of routerLink use 
+                 '/' for from root path
+                 './' or '' for from parent path
+************************************************************************************************
+39) loadChidren and named outlet
+    Error until version 4.3.0
+         core.es5.js:1020 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'route-study/product/list'
+            Error: Cannot match any routes. URL Segment: 'route-study/product/list'
+                at ApplyRedirects.noMatchError (http://localhost:3000/build/vendor.js:17467:16)
+                at CatchSubscriber.selector (http://localhost:3000/build/vendor.js:17442:29)
+                at CatchSubscriber.error (http://localhost:3000/build/vendor.js:72943:31)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at LastSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at ApplyRedirects.noMatchError (http://localhost:3000/build/vendor.js:17467:16)
+                at CatchSubscriber.selector (http://localhost:3000/build/vendor.js:17442:29)
+                at CatchSubscriber.error (http://localhost:3000/build/vendor.js:72943:31)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at LastSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4466:31)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4437:17)
+                at http://localhost:3000/build/polyfills.js:4514:17
+                at ZoneDelegate.invokeTask (http://localhost:3000/build/polyfills.js:4120:31)
+                at Object.onInvokeTask (http://localhost:3000/build/vendor.js:4481:33)
+                at ZoneDelegate.invokeTask (http://localhost:3000/build/polyfills.js:4119:36)
+                at Zone.runTask (http://localhost:3000/build/polyfills.js:3887:47)
+                at drainMicroTaskQueue (http://localhost:3000/build/polyfills.js:4280:35)
+                at HTMLAnchorElement.ZoneTask.invoke (http://localhost:3000/build/polyfills.js:4186:25)
+                at ____________________Elapsed_2_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_1_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_0_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_1_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at ZoneAwarePromise.then (http://localhost:3000/build/polyfills.js:4601:17)
+                at ____________________Elapsed_6_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at ZoneAwarePromise.then (http://localhost:3000/build/polyfills.js:4601:17)
+                at ____________________Elapsed_3957_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleEventTask (http://localhost:3000/build/polyfills.js:3957:25)
+                at zoneAwareAddListener (http://localhost:3000/build/polyfills.js:4975:14)
+                at HTMLAnchorElement.proto.(anonymous function) [as addEventListener] (http://localhost:3000/build/polyfills.js:5122:20)
+                at ____________________Elapsed_17_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at ZoneAwarePromise.then (http://localhost:3000/build/polyfills.js:4601:17)
+                at ____________________Elapsed_8_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_0_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_0_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+    
+    No solution now from https://github.com/angular/angular/issues/12842
+
+    Solution:
+       Firstly, let us know nested structure of router and loadChildren and outlet
+    -------------------------------------------------------------------------------------------------------------------------------
+       file structure :                   loadChildren         named outlets :                show which outlet:
+    --------------------------------------------------------------------------------------------------------------------------------
+       route-study module                rshome,product          primary                        parent's-- app's primary
+            |--- rshome module             none                  none because of no children    parent's-- route-study's primary
+            |--- product module          list,detail,item2       primary and 'product' outlet   parent's-- route-study's primary
+                |---list module            none                  none                           parent's 'product' outlet
+                |---detail module          item                  'detail' outlet                no set outlet in parent's primary
+                    |---item module        none                  none                           set outlet 'detail' in 'detail' outlet
+                    |---item2 module       none                  product's primary              product's primary
+    
+       Secondly, loadChidren setting
+            A) children way, using first lazy load level:
+                const routes: Routes = [        // --- inside route-study
+                    { path:'route-study',
+                        // outlet: 'product',   <-- CAN'T CALL CHILD'S OUTLET
+                        component:RouteStudyComponent,
+                        children:[
+                            { path: 'rshome', 
+                            loadChildren: './rshome/rshome.module#RSHomeModule' },
+                            { path: 'product', 
+                            loadChildren: './product/product.module#ProductModule' },
+                        ]
+                    }
+                    ];
+            B) parallel way, using below first lazy load level: 
+                const routes: Routes = [
+                    { path: 'list',
+                         component: ProductComponent,
+                        // outlet:'product', 
+                        loadChildren: './list/list.module#ListModule' },
+                    { path: 'detail', 
+                        component: ProductComponent,
+                        // outlet:'detail', 
+                        loadChildren: './detail/detail.module#DetailModule' },
+                    { path: 'item2',  
+                         component: ProductComponent,
+                        // outlet:'detail', 
+                        loadChildren: './detail/item2/item2.module#Item2Module' },
+                    { path: '',  component: ProductComponent }
+                    ];
+                Be careful to relation between component and outlet
+                   1) named outlet can't set loadChildren until now 2017/07/17,can set low level compnent,
+                      but outlet is this low level component's parent's 
+                      from https://github.com/angular/angular/issues/12842 there is one solution:
+                       {
+                            path: 'me',
+                            outlet: 'hub',
+                            component: ProxyRouteComponent,
+                            children: [
+                                {
+                                    path: '',
+                                    loadChildren: 'hub#HubModule',
+                                },
+                            ],
+                        },
+                        import { Component } from '@angular/core';
+                            @Component({
+                                selector: 'b-proxy-route',
+                                template: '<router-outlet></router-outlet>',
+                            })
+                            export class ProxyRouteComponent {
+                            }
+
+                   2) no set component with loadChildren
+                       2-1) lazy load module set named outlet which is in lazy load module's parent
+                            component, this module work fine but now showed ,because of no component
+                            to hold this lazy load module
+                       2-2) no set component, lazy load cat travse up route tree for outlet, if
+                            lazy load module no outlet set.
+                   3) set component ie. ProductComponent, there are two outlet show if lazy load
+                      module set named outlet.
+*********************************************************************************************
