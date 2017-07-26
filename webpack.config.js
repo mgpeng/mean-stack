@@ -1,1 +1,1 @@
-module.exports = require('./generic-config/webpack.config.for.mean.js');
+module.exports = require('./client-config/webpack.dev.js');

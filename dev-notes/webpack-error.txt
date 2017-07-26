@@ -494,6 +494,17 @@ Solution:
         </body>
        ...
     Now everything is fine.
+
+  Better Solution:
+      issue from webpack I asked, endless append because of Html-webpack-plugin's template
+      and filename use same filename, changed as:
+       new HtmlWebpackPlugin({
+            filename:'index.ejs',
+            // filename:'../../app/views/index-origin.ejs', LEAD TO ENDLESS APPEND BUNDLES because of same file name
+            template: './app/views/index-origin.ejs',
+            inject: true
+        }),
+      everything work.
 ********************************************************************************************
 8) angular route config use lazy loading setting by 'loadChildren', when angular loading
    those chunks which separate from main.js got Error: Loading chund <id> failed.
@@ -527,4 +538,297 @@ Solution:
         // __webpack_public_path__
      	__webpack_require__.p = "build/";
 
-    so it is clear everything like charm!
+    so it is clear everything work like charm!
+*****************************************************************************************
+9) Webpack 3 compile more than one time and webpack 2.7.0 and 2.6.1 no
+
+Same environment and webpacak.config.js as 
+```
+const webpack = require('webpack');
+const path=require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const helpers = require('./helpers');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+module.exports = {
+  entry: {
+    'polyfills': './public/polyfills',
+    'vendor': './public/vendor',
+    'main': './public/main'
+  },
+  devtool: 'inline-source-map',
+  resolve: {
+    extensions: [ '.js', '.ts']
+  },
+  output: {
+    path: path.resolve('public','./build'),
+    filename: '[name].[hash].js',
+    publicPath: 'build/',
+    sourceMapFilename: '[name].map'
+  },
+  module: {
+    rules: [
+     {
+        test: /\.ts$/,
+        loaders: [
+          {
+            loader: 'awesome-typescript-loader',
+            options: { configFileName: helpers.root('public', 'tsconfig.json') }
+          } , 'angular2-template-loader','angular2-router-loader'
+        ]
+      },
+      {
+        test: /\.html$/,
+        loader: 'html-loader'
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
+        loader: 'file-loader?name=assets/[name].[hash].[ext]'
+      },
+      {
+        test: /\.css$/,
+        include: helpers.root('public', 'app'),
+        loader: 'raw-loader'
+      },
+      {
+        test: /\.ejs$/,
+        use: 'raw-loader'
+      }
+    ]
+  },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: ['main', 'vendor', 'polyfills']
+    }),
+    new HtmlWebpackPlugin({
+      filename:'index.ejs',
+      template: './app/views/index-origin.ejs',
+      inject: true
+    }),
+    new webpack.ContextReplacementPlugin(
+        // The (\\|\/) piece accounts for path separators in *nix and Windows
+        // /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+        /angular(\\|\/)core(\\|\/)@angular/,
+        helpers.root('./public'), // location of your src
+        { }
+      )
+  ]
+};
+```
+Under webpack 3 get from console 
+```
+[1] [at-loader] Checking started in a separate process...
+[1] 
+[1] [at-loader] Ok, 1.425 sec.
+[1] Hash: a2b0085251400acf0f19
+[1] Version: webpack 3.3.0
+[1] Time: 132555ms
+[1]                             Asset       Size  Chunks                    Chunk Names
+[1]         0.a2b0085251400acf0f19.js    13.2 kB       0  [emitted]         
+[1]         1.a2b0085251400acf0f19.js    7.14 kB       1  [emitted]         
+[1]    vendor.a2b0085251400acf0f19.js    8.65 MB       2  [emitted]  [big]  vendor
+[1]      main.a2b0085251400acf0f19.js     136 kB       3  [emitted]         main
+[1]         4.a2b0085251400acf0f19.js    7.89 kB       4  [emitted]         
+[1]         5.a2b0085251400acf0f19.js    8.17 kB       5  [emitted]         
+[1]         6.a2b0085251400acf0f19.js    8.64 kB       6  [emitted]         
+[1]         7.a2b0085251400acf0f19.js    9.78 kB       7  [emitted]         
+[1] polyfills.a2b0085251400acf0f19.js     761 kB       8  [emitted]  [big]  polyfills
+[1]                         index.ejs  857 bytes          [emitted]         
+[1]   [10] (webpack)/buildin/global.js 509 bytes {8} [built]
+[1]  [172] ./public lazy 160 bytes {2} [built]
+[1]  [230] ./public/app/chat/chat.service.ts 2.29 kB {3} [built]
+[1]  [231] ./public/polyfills.ts 1.04 kB {8} [built]
+[1]  [373] ./public/vendor.ts 432 bytes {2} [built]
+[1]  [665] ./public/main.ts 302 bytes {3} [built]
+[1]  [666] ./public/app/app.module.ts 2.24 kB {3} [built]
+[1]  [667] ./public/app/coremodule/core.module.ts 1.24 kB {3} [built]
+[1]  [668] ./public/app/app-routing.module.ts 1.22 kB {3} [built]
+[1]  [669] ./public/app/authentication/authentication.module.ts 1.89 kB {3} [built]
+[1]  [674] ./public/app/home/home.module.ts 1.27 kB {3} [built]
+[1]  [678] ./public/app/articles/articles.module.ts 1.89 kB {3} [built]
+[1]  [684] ./public/app/route-study/route-study.module.ts 1.98 kB {3} [built]
+[1]  [686] ./public/app/chat/chat.module.ts 1.47 kB {3} [built]
+[1]  [689] ./public/app/app.component.ts 1.87 kB {3} [built]
+[1]     + 695 hidden modules
+[1] Child html-webpack-plugin for "index.ejs":
+[1]        [0] ./node_modules/html-webpack-plugin/lib/loader.js!./app/views/index-origin.ejs 664 bytes {0} [built]
+[1] 
+[1] [at-loader] Checking started in a separate process...
+[1] 
+[1] [at-loader] Ok, 0.011 sec.
+[1] Hash: 57d9c2d87d3af9ed75dd
+[1] Version: webpack 3.3.0
+[1] Time: 2780ms
+[1]                             Asset       Size  Chunks                    Chunk Names
+[1]         0.57d9c2d87d3af9ed75dd.js    13.8 kB       0  [emitted]         
+[1]         1.57d9c2d87d3af9ed75dd.js    7.55 kB       1  [emitted]         
+[1]    vendor.57d9c2d87d3af9ed75dd.js     8.7 MB       2  [emitted]  [big]  vendor
+[1]      main.57d9c2d87d3af9ed75dd.js     141 kB       3  [emitted]         main
+[1]         4.57d9c2d87d3af9ed75dd.js    8.32 kB       4  [emitted]         
+[1]         5.57d9c2d87d3af9ed75dd.js    8.64 kB       5  [emitted]         
+[1]         6.57d9c2d87d3af9ed75dd.js    9.11 kB       6  [emitted]         
+[1]         7.57d9c2d87d3af9ed75dd.js    10.2 kB       7  [emitted]         
+[1] polyfills.57d9c2d87d3af9ed75dd.js     761 kB       8  [emitted]  [big]  polyfills
+[1]                         index.ejs  857 bytes          [emitted]         
+[1]  [172] ./public lazy 160 bytes {2} [built]
+[1]     + 709 hidden modules
+[1] Child html-webpack-plugin for "index.ejs":
+[1]        1 module
+[1] 
+[1] [at-loader] Checking started in a separate process...
+[1] 
+[1] [at-loader] Ok, 0.007 sec.
+[1] Hash: a2b0085251400acf0f19
+[1] Version: webpack 3.3.0
+[1] Time: 3723ms
+[1]                             Asset       Size  Chunks                    Chunk Names
+[1]         0.a2b0085251400acf0f19.js    14.4 kB       0  [emitted]         
+[1]         1.a2b0085251400acf0f19.js    8.02 kB       1  [emitted]         
+[1]    vendor.a2b0085251400acf0f19.js    8.76 MB       2  [emitted]  [big]  vendor
+[1]      main.a2b0085251400acf0f19.js     147 kB       3  [emitted]         main
+[1]         4.a2b0085251400acf0f19.js     8.8 kB       4  [emitted]         
+[1]         5.a2b0085251400acf0f19.js    9.15 kB       5  [emitted]         
+[1]         6.a2b0085251400acf0f19.js    9.61 kB       6  [emitted]         
+[1]         7.a2b0085251400acf0f19.js    10.7 kB       7  [emitted]         
+[1] polyfills.a2b0085251400acf0f19.js     761 kB       8  [emitted]  [big]  polyfills
+[1]                         index.ejs  857 bytes          [emitted]         
+[1]  [172] ./public lazy 160 bytes {2} [built]
+[1]     + 709 hidden modules
+[1] Child html-webpack-plugin for "index.ejs":
+[1]        1 module
+
+```
+built two set bundles inside build folder 
+```
+0.57d9c2d87d3af9ed75dd.js
+0.a2b0085251400acf0f19.js
+1.57d9c2d87d3af9ed75dd.js
+1.a2b0085251400acf0f19.js
+4.57d9c2d87d3af9ed75dd.js
+4.a2b0085251400acf0f19.js
+5.57d9c2d87d3af9ed75dd.js
+5.a2b0085251400acf0f19.js
+6.57d9c2d87d3af9ed75dd.js
+6.a2b0085251400acf0f19.js
+7.57d9c2d87d3af9ed75dd.js
+7.a2b0085251400acf0f19.js
+index.ejs
+main.57d9c2d87d3af9ed75dd.js
+main.a2b0085251400acf0f19.js
+polyfills.57d9c2d87d3af9ed75dd.js
+polyfills.a2b0085251400acf0f19.js
+vendor.57d9c2d87d3af9ed75dd.js
+vendor.a2b0085251400acf0f19.js
+```
+webpack 3 compile under hash a2b0085251400acf0f19 two times
+hash 57d9c2d87d3af9ed75dd do one time
+
+Under webpack 2.7.0 it work fine
+```
+[1] [at-loader] Checking started in a separate process...
+[1] 
+[1] [at-loader] Ok, 1.157 sec.
+[1] Hash: 1637c8aff420b9256a54
+[1] Version: webpack 2.7.0
+[1] Time: 44314ms
+[1]                             Asset       Size  Chunks                    Chunk Names
+[1]         0.1637c8aff420b9256a54.js    13.1 kB       0  [emitted]         
+[1]         1.1637c8aff420b9256a54.js    7.05 kB       1  [emitted]         
+[1]    vendor.1637c8aff420b9256a54.js    8.64 MB       2  [emitted]  [big]  vendor
+[1]      main.1637c8aff420b9256a54.js     135 kB       3  [emitted]         main
+[1]         4.1637c8aff420b9256a54.js     7.8 kB       4  [emitted]         
+[1]         5.1637c8aff420b9256a54.js    8.09 kB       5  [emitted]         
+[1]         6.1637c8aff420b9256a54.js    8.56 kB       6  [emitted]         
+[1]         7.1637c8aff420b9256a54.js    9.69 kB       7  [emitted]         
+[1] polyfills.1637c8aff420b9256a54.js     755 kB       8  [emitted]  [big]  polyfills
+[1]                         index.ejs  857 bytes          [emitted]         
+[1]   [35] ./~/@angular/common/@angular/common.es5.js 131 kB {2} [built]
+[1]   [43] ./~/@angular/platform-browser/@angular/platform-browser.es5.js 141 kB {2} [built]
+[1]   [57] ./~/@angular/forms/@angular/forms.es5.js 204 kB {2} [built]
+[1]   [74] ./~/@angular/http/@angular/http.es5.js 74.6 kB {2} [built]
+[1]   [93] ./~/@angular/platform-browser-dynamic/@angular/platform-browser-dynamic.es5.js 5.88 kB {2} [built]
+[1]  [131] ./~/@angular/compiler/@angular/compiler.es5.js 1.03 MB {2} [built]
+[1]  [132] ./~/socket.io-client/lib/index.js 2.17 kB {2} [built]
+[1]  [231] ./public/app/app.module.ts 2.24 kB {3} [built]
+[1]  [232] ./~/core-js/es6/array.js 944 bytes {8} [built]
+[1]  [233] ./~/core-js/es6/date.js 231 bytes {8} [built]
+[1]  [234] ./~/core-js/es6/map.js 207 bytes {8} [built]
+[1]  [235] ./~/core-js/es6/math.js 690 bytes {8} [built]
+[1]  [264] ./public/main.ts 302 bytes {3} [built]
+[1]  [265] ./public/polyfills.ts 1.04 kB {8} [built]
+[1]  [266] ./public/vendor.ts 432 bytes {2} [built]
+[1]     + 695 hidden modules
+[1] Child html-webpack-plugin for "index.ejs":
+[1]        [0] ./~/html-webpack-plugin/lib/loader.js!./app/views/index-origin.ejs 664 bytes {0} [built]
+[1] 
+[1] [at-loader] Checking started in a separate process...
+[1] 
+[1] [at-loader] Ok, 0.008 sec.
+```
+built correct in build folder 
+```
+0.1637c8aff420b9256a54.js
+1.1637c8aff420b9256a54.js
+4.1637c8aff420b9256a54.js
+5.1637c8aff420b9256a54.js
+6.1637c8aff420b9256a54.js
+7.1637c8aff420b9256a54.js
+index.ejs
+main.1637c8aff420b9256a54.js
+polyfills.1637c8aff420b9256a54.js
+vendor.1637c8aff420b9256a54.js
+```
+Solution:
+    1) move 'build' folder which for bundles out 'public' folder which for angular 2 source code, 
+    so it works.
+    2) change express config file  
+        // app.set('views','./public/build');      <--- before
+        app.set('views','./build');                <--- after
+
+       // app.use('/', express.static(path.resolve('./public')));  <--- before
+       app.use('/', express.static(path.resolve('./build')));      <--- after
+before:
+root/public--
+            |--build-|
+                      |---index.ejs
+                      |--vendor.[hash1].ts
+                      |--vendor.[hash2].ts
+                      |--main.[hash1].ts
+                      |--main.[hash2].ts
+                      |--polyfills.[hash1].ts
+                      |--polyfills.[hash2].ts
+                      |--0.[hash1].ts
+                      |--0..[hash2].ts
+                           ....
+            |--app      <--- angular source code
+            |--style.css
+            |--vendor.ts
+            |--main.ts
+            |--polyfills.ts
+            ....
+after:
+
+root/build --
+            |---index.ejs
+            |--vendor.[hash].ts
+            |--main.[hash].ts
+            |--polyfills.[hash].ts
+            |--0.[hash].ts
+            |--1..[hash].ts
+            ....
+root/public--
+            |--app      <--- angular source code
+            |--style.css
+            |--vendor.ts
+            |--main.ts
+            |--polyfills.ts
+            ....
+And I don't understand what is meaning "your output folder as part of the dependency graph" 
+and so why I should "added the /public folder 
+to the dependency graph via ContextReplacementPlugin". I can't find documents which is helpful.
+****************************************************************************************
+PAY ATTENTION:  change some folder name, 'public' ->'client-src'  , 'build' -> 'dist'
+                'generic-config' -> 'client-config'   'config' -> 'server-config'
+                'app' -> 'server-src'
+*****************************************************************************************

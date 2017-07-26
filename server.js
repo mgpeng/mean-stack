@@ -1,8 +1,8 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
-const configureMongoose = require('./config/mongoose');  //--  mongoose should be load first
-const configureExpress=require('./config/express.js');
-const configurePassport=require('./config/passport.js');
+const configureMongoose = require('./server-config/mongoose');  //--  mongoose should be load first
+const configureExpress=require('./server-config/express.js');
+const configurePassport=require('./server-config/passport.js');
 
 const db=configureMongoose();
 const app=configureExpress(db);
