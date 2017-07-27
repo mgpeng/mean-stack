@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-// import '../style.css';
+import '../style.scss';
 
 @Component({
   selector: 'app',
@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
                <router-outlet></router-outlet>
             </div>
   `,
-  styleUrls:['./app.component.css']
+  styleUrls:['./app.component.scss']
 })
 export class AppComponent { 
   name = 'Angular'; 

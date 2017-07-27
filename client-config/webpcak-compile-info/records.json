@@ -13,6 +13,27 @@
         "byName": {},
         "byBlocks": {},
         "usedIds": {
+          "1": 1
+        }
+      }
+    }
+  ],
+  "extract-text-webpack-plugin node_modules/extract-text-webpack-plugin/dist node_modules/css-loader/index.js!node_modules/sass-loader/lib/loader.js!client-src/style.scss": [
+    {
+      "modules": {
+        "byIdentifier": {
+          "node_modules/css-loader/index.js!node_modules/sass-loader/lib/loader.js!client-src/style.scss": 0,
+          "node_modules/css-loader/lib/css-base.js": 1
+        },
+        "usedIds": {
+          "0": 0,
+          "1": 1
+        }
+      },
+      "chunks": {
+        "byName": {},
+        "byBlocks": {},
+        "usedIds": {
           "0": 0
         }
       }
@@ -697,7 +718,7 @@
       "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/home/home.module.ts": 674,
       "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/home/home-routing.module.ts": 675,
       "node_modules/html-loader/index.js!client-src/app/home/home.component.html": 676,
-      "node_modules/raw-loader/index.js!client-src/app/home/home.component.css": 677,
+      "node_modules/raw-loader/index.js!node_modules/style-loader/index.js!node_modules/css-loader/index.js!node_modules/sass-loader/lib/loader.js!client-src/app/home/home.component.scss": 677,
       "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/articles/articles.module.ts": 678,
       "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/articles/articles-routing.module.ts": 679,
       "node_modules/html-loader/index.js!client-src/app/articles/create/create.component.html": 680,
@@ -710,26 +731,27 @@
       "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/chat/chat-routing.module.ts": 687,
       "node_modules/html-loader/index.js!client-src/app/chat/chat.component.html": 688,
       "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/app.component.ts": 689,
-      "node_modules/raw-loader/index.js!client-src/app/app.component.css": 690,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/rshome/rshome.module.ts": 691,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/product.module.ts": 692,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/test.service.ts": 693,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/rshome/rshome.component.ts": 694,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/product.component.ts": 695,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/list/list.component.ts": 696,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/detail.component.ts": 697,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item/item.component.ts": 698,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item2/item2.component.ts": 699,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/rshome/rshome.router.module.ts": 700,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/product.router.module.ts": 701,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/list/list.module.ts": 702,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/list/list.router.module.ts": 703,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/detail.module.ts": 704,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/detail.router.module.ts": 705,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item/item.module.ts": 706,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item/item.router.module.ts": 707,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item2/item2.module.ts": 708,
-      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item2/item2.router.module.ts": 709
+      "node_modules/extract-text-webpack-plugin/dist/loader.js??ref--5-0!node_modules/style-loader/index.js!node_modules/css-loader/index.js!node_modules/sass-loader/lib/loader.js!client-src/style.scss": 690,
+      "node_modules/raw-loader/index.js!node_modules/style-loader/index.js!node_modules/css-loader/index.js!node_modules/sass-loader/lib/loader.js!client-src/app/app.component.scss": 691,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/rshome/rshome.module.ts": 692,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/product.module.ts": 693,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/test.service.ts": 694,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/rshome/rshome.component.ts": 695,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/product.component.ts": 696,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/list/list.component.ts": 697,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/detail.component.ts": 698,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item/item.component.ts": 699,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item2/item2.component.ts": 700,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/rshome/rshome.router.module.ts": 701,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/product.router.module.ts": 702,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/list/list.module.ts": 703,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/list/list.router.module.ts": 704,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/detail.module.ts": 705,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/detail.router.module.ts": 706,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item/item.module.ts": 707,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item/item.router.module.ts": 708,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item2/item2.module.ts": 709,
+      "node_modules/awesome-typescript-loader/dist/entry.js??ref--0-0!node_modules/angular2-template-loader/index.js!node_modules/angular2-router-loader/src/index.js!client-src/app/route-study/product/detail/item2/item2.router.module.ts": 710
     },
     "usedIds": {
       "0": 0,
@@ -1441,7 +1463,8 @@
       "706": 706,
       "707": 707,
       "708": 708,
-      "709": 709
+      "709": 709,
+      "710": 710
     }
   },
   "chunks": {

@@ -14,12 +14,6 @@ module.exports = {
   resolve: {
     extensions: [ '.js', '.ts']
   },
-  // output: {
-  //   path: path.resolve('client-src','./dist'),
-  //   filename: '[name].[hash].js',
-  //   publicPath: 'dist/',
-  //   sourceMapFilename: '[name].map'
-  // },
   module: {
     rules: [
      {
@@ -39,17 +33,31 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
         use: ['file-loader?name=assets/[name].[hash].[ext]']
       },
+      // {
+      //     test: /\.scss$/,
+      //     exclude: helpers.root('client-src','app'),
+      //     use: ExtractTextPlugin.extract({
+      //         use: [{
+      //             loader: "css-loader" ,options: { minimize: true }
+      //         }, {
+      //             loader: "sass-loader"
+      //         }],
+      //         // use style-loader in development
+      //         fallback: "style-loader"
+      //     })
+      // },
       {
-        test: /\.css$/,
-        exclude: helpers.root('client-src','app'),
-        loader: ExtractTextPlugin.extract({ 
-             fallback: 'style-loader', use: ['css-loader?sourceMap']
-            })
-      },
-      {
-        test: /\.css$/,
+        test: /\.scss$/,
         include: helpers.root('client-src', 'app'),
-        use: ['raw-loader']
+        use: [{
+               loader: 'raw-loader'
+             },{
+                loader: 'style-loader'
+             },{
+               loader: 'css-loader'
+             },{
+               loader: 'sass-loader'
+             }]
       },
       {
         test: /\.ejs$/,
@@ -66,12 +74,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename:'index.ejs',
       template: './server-src/views/index-origin.ejs',
-      // template: './client-src/index-origin.ejs',
       showErrors: true,
     }),
-    // new ExtractTextPlugin({
-    //     filename: '[name].css'
-    // }),
     new webpack.ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
         // /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,

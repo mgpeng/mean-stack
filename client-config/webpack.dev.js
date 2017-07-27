@@ -15,7 +15,23 @@ module.exports = webpackMerge(commonConfig, {
     chunkFilename: '[id].chunk.js',
     sourceMapFilename: '[name].map'
   },
-
+  module: {
+    rules: [
+        {
+          test: /\.scss$/,
+          exclude: helpers.root('client-src','app'),
+          use: ExtractTextPlugin.extract({
+              use: [{
+                  loader: "css-loader" 
+              }, {
+                  loader: "sass-loader"
+              }],
+              // use style-loader in development
+              fallback: "style-loader"
+           })
+        }
+     ]
+  },
   plugins: [
     new ExtractTextPlugin({
       filename:'[name].css',allChunks:true

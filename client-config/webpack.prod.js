@@ -4,27 +4,38 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const commonConfig = require('./webpack.common.js');
 const helpers = require('./helpers');
 const path=require('path');
+const OptimizeCssAssetsPlugin= require('optimize-css-assets-webpack-plugin');
 
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 
 module.exports = webpackMerge(commonConfig, {
-  devtool: 'source-map',
-
+  // devtool: 'source-map',
   output: {
     path: path.resolve('dist'),
     publicPath: '',
     filename: '[name].[hash].js',
     chunkFilename: '[id].[hash].chunk.js'
-    //  filename: '[name].js',
-    //  chunkFilename: '[id].chunk.js'
   },
-
+  module: {
+    rules: [
+      {
+          test: /\.scss$/,
+          exclude: helpers.root('client-src','app'),
+          use: ExtractTextPlugin.extract({
+              use: [{
+                  loader: "css-loader" ,options: { minimize: true }
+              }, {
+                  loader: "sass-loader"
+              }],
+              // use style-loader in development
+              fallback: "style-loader"
+          })
+      },
+    ]
+  },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.optimize.UglifyJsPlugin({ // https://github.com/angular/angular/issues/10618
-      // mangle: {
-      //   keep_fnames: true
-      // }
       beautify: false,
       mangle: {
         screw_ie8: true,
@@ -33,9 +44,19 @@ module.exports = webpackMerge(commonConfig, {
       compress: {
         screw_ie8: true
       },
-      comments: false
+      comments: false,
+      // parallel: {
+      //   cache: true,
+      //   workers: 2 // for e.g
+      // }
     }),
     new ExtractTextPlugin('[name].[hash].css'),
+    new OptimizeCssAssetsPlugin({
+      assetNameRegExp: /\.optimize\.scss$/g,
+      cssProcessor: require('cssnano'),
+      cssProcessorOptions: { discardComments: {removeAll: true } },
+      canPrint: true
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         'ENV': JSON.stringify(ENV)
