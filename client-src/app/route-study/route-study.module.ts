@@ -19,7 +19,7 @@ import { RouteStudyComponent }         from './route-study.component';
     // ListModule,
     // ItemModule,
     // Item2Module
-    RouteStudyRoutingModule,
+    // RouteStudyRoutingModule,
   ],
   declarations: [
     RouteStudyComponent,

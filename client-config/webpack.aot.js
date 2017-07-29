@@ -4,12 +4,22 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const helpers = require('./helpers');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const OptimizeCssAssetsPlugin= require('optimize-css-assets-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
+
+const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 
 module.exports = {
   entry: {
     'polyfills': './client-src/polyfills',
     'vendor': './client-src/vendor',
-    'main': './client-src/main'
+    'main': './client-src/main-aot'
+  },
+  output: {
+    path: path.resolve('dist-aot'),
+    publicPath: '',
+    filename: '[name].[hash].js',
+    chunkFilename: '[id].[hash].chunk.js'
   },
   resolve: {
     extensions: ['.js','.ts','.html','.css'] 
@@ -22,7 +32,7 @@ module.exports = {
           {
             loader: 'awesome-typescript-loader',
             options: { configFileName: helpers.root('client-src', 'tsconfig.json') }
-          } , 'angular2-template-loader','angular-router-loader'
+          } , 'angular2-template-loader','angular-router-loader?aot=true&genDir=dist-aot/',
         ]
       },
       {
@@ -33,19 +43,19 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
         use: ['file-loader?name=assets/[name].[hash].[ext]']
       },
-      // {
-      //     test: /\.scss$/,
-      //     exclude: helpers.root('client-src','app'),
-      //     use: ExtractTextPlugin.extract({
-      //         use: [{
-      //             loader: "css-loader" ,options: { minimize: true }
-      //         }, {
-      //             loader: "sass-loader"
-      //         }],
-      //         // use style-loader in development
-      //         fallback: "style-loader"
-      //     })
-      // },
+      {
+          test: /\.scss$/,
+          exclude: helpers.root('client-src','app'),
+          use: ExtractTextPlugin.extract({
+              use: [{
+                  loader: "css-loader" ,options: { minimize: true }
+              }, {
+                  loader: "sass-loader"
+              }],
+              // use style-loader in development
+              fallback: "style-loader"
+          })
+      },
       {
         test: /\.scss$/,
         include: helpers.root('client-src', 'app'),
@@ -66,7 +76,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(['../dist/*.*']),
+    // new CleanWebpackPlugin([helpers.root('/dist/*.*')]),
     // new ForkCheckerPlugin(),  can't find this plugin
     new webpack.optimize.CommonsChunkPlugin({
       name: ['main', 'vendor', 'polyfills']
@@ -82,7 +92,44 @@ module.exports = {
         /angular(\\|\/)core(\\|\/)@angular/,
         helpers.root('./client-src'), // location of your src
         {}
-      )
+    ),
+     new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.optimize.UglifyJsPlugin({ // https://github.com/angular/angular/issues/10618
+      beautify: false,
+      mangle: {
+        screw_ie8: true,
+        keep_fnames: true
+      },
+      compress: {
+        screw_ie8: true,
+        unused:true,
+        warnings: false
+      },
+      comments: false,
+      parallel: {
+        cache: true,
+        workers: 2 // for e.g
+      },
+      sourceMap: false
+    }),
+    new ExtractTextPlugin({filename: '[name].[hash].css', allChunks: true}),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'ENV': JSON.stringify(ENV)
+      }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      htmlLoader: {
+        minimize: false // workaround for ng2
+      }
+    }),
+        new CompressionPlugin({
+            asset: "[path].gz[query]",
+            algorithm: "gzip",
+            test: /\.(js|html|css)$/,
+            threshold: 10240,
+            minRatio: 0
+    }),
   ],
   recordsOutputPath: path.join(__dirname, "../client-config/webpcak-compile-info", "records.json")
 };

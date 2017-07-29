@@ -6,5 +6,5 @@
  /* tslint:disable */
 
 
-export const styles:any[] = ['.strong[_ngcontent-%COMP%] {\n    font-size: 1.5em;\n    font-weight: 100;\n}\n.highlight[_ngcontent-%COMP%] {\n    background-color:grey;\n}'];
+export const styles:any[] = ['.strong[_ngcontent-%COMP%]{\n    font-size: 1.5em;\n    font-weight: 100;\n}\n.highlight[_ngcontent-%COMP%]{\n    background-color:grey;\n}'];
 //# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FwcGxlL0RvY3VtZW50cy94aXhpaml1X25nLW1kL21lYW4tc3RhY2svY2xpZW50LXNyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzLnNoaW0ubmdzdHlsZS50cyIsInZlcnNpb24iOjMsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIm5nOi8vL1VzZXJzL2FwcGxlL0RvY3VtZW50cy94aXhpaml1X25nLW1kL21lYW4tc3RhY2svY2xpZW50LXNyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzIl0sInNvdXJjZXNDb250ZW50IjpbIiAiXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7OzsifQ==

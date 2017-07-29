@@ -5,6 +5,7 @@ const commonConfig = require('./webpack.common.js');
 const helpers = require('./helpers');
 const path=require('path');
 const OptimizeCssAssetsPlugin= require('optimize-css-assets-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
 
 const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
 
@@ -42,21 +43,16 @@ module.exports = webpackMerge(commonConfig, {
         keep_fnames: true
       },
       compress: {
-        screw_ie8: true
+        screw_ie8: true,
+        unused:true
       },
       comments: false,
-      // parallel: {
-      //   cache: true,
-      //   workers: 2 // for e.g
-      // }
+      parallel: {
+        cache: true,
+        workers: 2 // for e.g
+      }
     }),
-    new ExtractTextPlugin('[name].[hash].css'),
-    new OptimizeCssAssetsPlugin({
-      assetNameRegExp: /\.optimize\.scss$/g,
-      cssProcessor: require('cssnano'),
-      cssProcessorOptions: { discardComments: {removeAll: true } },
-      canPrint: true
-    }),
+    new ExtractTextPlugin({filename: '[name].[hash].css', allChunks: true}),
     new webpack.DefinePlugin({
       'process.env': {
         'ENV': JSON.stringify(ENV)
@@ -66,6 +62,19 @@ module.exports = webpackMerge(commonConfig, {
       htmlLoader: {
         minimize: false // workaround for ng2
       }
-    })
+    }),
+        new CompressionPlugin({
+            asset: "[path].gz[query]",
+            algorithm: "gzip",
+            test: /\.(js|html|css)$/,
+            threshold: 10240,
+            minRatio: 0
+    }),
+    // new OptimizeCssAssetsPlugin({
+    //   assetNameRegExp: /\.optimize\.scss$/g,
+    //   cssProcessor: require('cssnano'),
+    //   cssProcessorOptions: { discardComments: {removeAll: true } },
+    //   canPrint: true
+    // }),
   ]
 });

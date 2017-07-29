@@ -13,7 +13,6 @@ import { Component }  from '@angular/core';
       <a routerLink="product/item2" routerLinkActive="active">product/detail/item2</a>
     </nav>
     <router-outlet></router-outlet>
-
   `
 })
 export class RouteStudyComponent { }
