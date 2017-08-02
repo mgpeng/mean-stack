@@ -30,7 +30,7 @@ function View_ChatComponent_2(_l) {
 function View_ChatComponent_3(_l) {
     return i0.ɵvid(0, [(_l()(), i0.ɵeld(0, null, null, 10, 'span', [], null, null, null, null, null)), (_l()(),
             i0.ɵted(null, ['\n      '])), (_l()(), i0.ɵeld(0, null, null, 1, 'span', [], null, null, null, null, null)), (_l()(), i0.ɵted(null, ['', ''])), (_l()(), i0.ɵted(null, ['\n      '])), (_l()(), i0.ɵeld(0, null, null, 1, 'span', [], null, null, null, null, null)), (_l()(),
-            i0.ɵted(null, ['', ':'])), (_l()(), i0.ɵted(null, ['\n      '])),
+            i0.ɵted(null, ['', ''])), (_l()(), i0.ɵted(null, ['\n      '])),
         (_l()(), i0.ɵeld(0, null, null, 1, 'span', [], null, null, null, null, null)), (_l()(), i0.ɵted(null, ['', ''])), (_l()(), i0.ɵted(null, ['\n    ']))], null, function (_ck, _v) {
         var currVal_0 = _v.parent.context.$implicit.created;
         _ck(_v, 3, 0, currVal_0);

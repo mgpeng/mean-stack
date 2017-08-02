@@ -3,7 +3,6 @@ const path=require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const helpers = require('./helpers');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -12,7 +11,7 @@ module.exports = {
     'main': './client-src/main'
   },
   resolve: {
-    extensions: ['.js','.ts','.html','.css'] 
+    extensions: ['.js','.ts'] 
   },
   module: {
     rules: [
@@ -66,8 +65,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(['../dist/*.*']),
-    // new ForkCheckerPlugin(),  can't find this plugin
     new webpack.optimize.CommonsChunkPlugin({
       name: ['main', 'vendor', 'polyfills']
     }),

@@ -81,7 +81,7 @@ export function View_RouteStudyComponent_0(_l) {
         }, null, null)), i0.ɵdid(671744, [[12, 4]], 0, i1.RouterLinkWithHref, [i1.Router, i1.ActivatedRoute, i2.LocationStrategy], { routerLink: [0, 'routerLink'] }, null), i0.ɵdid(1720320, null, 2, i1.RouterLinkActive, [i1.Router,
             i0.ElementRef, i0.Renderer2, i0.ChangeDetectorRef], { routerLinkActive: [0, 'routerLinkActive'] }, null), i0.ɵqud(603979776, 11, { links: 1 }), i0.ɵqud(603979776, 12, { linksWithHrefs: 1 }),
         (_l()(), i0.ɵted(null, ['product/detail/item2'])), (_l()(), i0.ɵted(null, ['\n    '])), (_l()(), i0.ɵted(null, ['\n    '])), (_l()(), i0.ɵeld(16777216, null, null, 1, 'router-outlet', [], null, null, null, null, null)), i0.ɵdid(212992, null, 0, i1.RouterOutlet, [i1.ChildrenOutletContexts, i0.ViewContainerRef,
-            i0.ComponentFactoryResolver, [8, null], i0.ChangeDetectorRef], null, null), (_l()(), i0.ɵted(null, ['\n\n  ']))], function (_ck, _v) {
+            i0.ComponentFactoryResolver, [8, null], i0.ChangeDetectorRef], null, null), (_l()(), i0.ɵted(null, ['\n  ']))], function (_ck, _v) {
         var currVal_2 = 'rshome';
         _ck(_v, 4, 0, currVal_2);
         var currVal_3 = 'active';

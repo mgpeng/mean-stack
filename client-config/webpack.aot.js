@@ -3,7 +3,6 @@ const path=require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const helpers = require('./helpers');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin= require('optimize-css-assets-webpack-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
 
@@ -22,7 +21,7 @@ module.exports = {
     chunkFilename: '[id].[hash].chunk.js'
   },
   resolve: {
-    extensions: ['.js','.ts','.html','.css'] 
+    extensions: ['.js','.ts'] 
   },
   module: {
     rules: [
@@ -76,10 +75,9 @@ module.exports = {
     ]
   },
   plugins: [
-    // new CleanWebpackPlugin([helpers.root('/dist/*.*')]),
     // new ForkCheckerPlugin(),  can't find this plugin
     new webpack.optimize.CommonsChunkPlugin({
-      name: ['main', 'vendor', 'polyfills']
+      name: ['main-aot', 'vendor', 'polyfills']
     }),
     new HtmlWebpackPlugin({
       filename:'index.ejs',
@@ -94,24 +92,24 @@ module.exports = {
         {}
     ),
      new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.optimize.UglifyJsPlugin({ // https://github.com/angular/angular/issues/10618
-      beautify: false,
-      mangle: {
-        screw_ie8: true,
-        keep_fnames: true
-      },
-      compress: {
-        screw_ie8: true,
-        unused:true,
-        warnings: false
-      },
-      comments: false,
-      parallel: {
-        cache: true,
-        workers: 2 // for e.g
-      },
-      sourceMap: false
-    }),
+    // new webpack.optimize.UglifyJsPlugin({ // https://github.com/angular/angular/issues/10618
+    //   beautify: false,
+    //   mangle: {
+    //     screw_ie8: true,
+    //     keep_fnames: true
+    //   },
+    //   compress: {
+    //     screw_ie8: true,
+    //     unused:true,
+    //     warnings: false
+    //   },
+    //   comments: false,
+    //   parallel: {
+    //     cache: true,
+    //     workers: 2 // for e.g
+    //   },
+    //   sourceMap: false
+    // }),
     new ExtractTextPlugin({filename: '[name].[hash].css', allChunks: true}),
     new webpack.DefinePlugin({
       'process.env': {
@@ -123,13 +121,13 @@ module.exports = {
         minimize: false // workaround for ng2
       }
     }),
-        new CompressionPlugin({
-            asset: "[path].gz[query]",
-            algorithm: "gzip",
-            test: /\.(js|html|css)$/,
-            threshold: 10240,
-            minRatio: 0
-    }),
+    // new CompressionPlugin({
+    //         asset: "[path].gz[query]",
+    //         algorithm: "gzip",
+    //         test: /\.(js|html|css)$/,
+    //         threshold: 10240,
+    //         minRatio: 0
+    // }),
   ],
   recordsOutputPath: path.join(__dirname, "../client-config/webpcak-compile-info", "records.json")
 };
