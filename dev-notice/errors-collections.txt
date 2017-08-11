@@ -1,0 +1,1234 @@
+这是本项目中常见error的列表：
+1) Error:no provider string   baseError as constructor
+    reason:
+           @Injectable()
+            export class HeroService { 
+                private heroesUrl="app/heroes";
+                constructor(private http:Http,
+                            private logger:LoggerService,
+                here!!!  -->   private accessLevel:string
+                            ){}
+     accessLevel:string not import because it is not class,should 
+     a) have providerFactory for it 
+     b) then import providerFactory in parent component or app.module.ts
+     c) use it in component by HeroService 
+     (ref as angular 2 dependency inject)
+     2016/Dec/02
+-------------------------------------------------------------------------------------------------------
+2) No error message, can't find Db
+    reason: use in-memory-web-api  seperate forRoot(FirstInMemoryDbClass)
+            hava another SecondInMemoryDbClass
+    Solution:
+             all db in one InMemoryDbService implements class
+            
+  
+---------------------------------------------------------------------------------------------------
+3)Inject AService inside OtherService and try to change AService's property,this
+         property only get its init value, like as following, currentUser,can't 
+         in OtherService use AService.createCurrentUser() get new currentUser,
+         currentUser doesn't change its init Value.
+
+               @Injectable()
+                export class UserService implements OnInit{ 
+                    currentUser:User=new User("123456789-abcdefg-10", "nado","normal");
+                    private usersUrl="app/users";
+                    constructor(private http:Http,private logger:LoggerService){
+                        this.createCurrentUser();  //------DON'T CHANGE  currentUser if inject 
+                                                                 UserSerivce inside HeroService
+                    }
+                    ngOnInit():void{
+                        this.createCurrentUser();   //------DON'T CHANGE  currentUser if inject 
+                                                                 UserSerivce inside HeroService
+                    }
+                    createCurrentUser():Promise<void>{
+                         return  this.getUsers()
+                                    .then(users => {
+                                                this.currentUser=users[Math.floor(Math.random() * (users.length))];
+                                                console.log("createCurrentUser");
+                                                console.log(this.currentUser);
+                                                return Promise.resolve(undefined);
+                                            })
+                                    .catch(this.handleError);
+                    }
+    What for do this?
+            according to current user's access level to get Heroes to show ,don't show all Heroes,
+            maybe call it for access control
+
+    Solution:
+            maybe create another empty db and service for access control,inject whole service not
+            one User's property
+            none
+---------------------------------------------------------------------------------------------
+4) fontSizePx and "Resizable Text" doesn't change when push button in my-sizer, as following
+        <my-sizer [(size)]="fontSizePx"></my-sizer>
+        <div [style.font-size.px]="fontSizePx">Resizable Text</div>
+Solution:
+
+  @Input()  size: number | string;
+  @Output() fontSizeChange = new EventEmitter<number>();
+  dec() { this.resize(-1); }
+  inc() { this.resize(+1); }
+  resize(delta: number) {
+    this.size = Math.min(40, Math.max(8, +this.size + delta));
+    this.fontSizeChange.emit(this.size);
+  }
+fontSizeChange is not correct!!! not right ngModel syntax,should be "sizeChange"
+reason as following:
+        The [(x)] syntax is easy to demonstrate when the element has a settable property called x and 
+        a corresponding event named xChange. Here's a SizerComponent that fits the pattern. 
+        It has a size value property and a companion sizeChange event:
+
+---------------------------------------------------------------------------------------
+5)template reference var #testDiv inside div work well, but className for setClasses()'s classes,
+style is setStyle()'s, no hidden show. but if take {{testDiv.className}} and {{testDiv.style.cssText}} 
+out div, there are error className and style undefined
+Below work well:
+```
+ <div #testDiv [ngStyle]="setStyle()" [ngClass]="setClasses()"  [class.hidden]="isHidden" *ngIf="isDel">
+                  Text for Check
+                    {{testDiv.className}} 
+                    {{testDiv.style.cssText}} 
+            </div>
+```
+below doesn't work:
+```
+ <div #testDiv [ngStyle]="setStyle()" [ngClass]="setClasses()"  [class.hidden]="isHidden" *ngIf="isDel">
+                  Text for Check</div>
+ {{testDiv.className}} 
+ {{testDiv.style.cssText}} 
+```
+then I found if delete *ngIf="isDel", everything is ok, I try to find angular's document about 
+template reference variable and *ngIf conflict, nothing found.
+
+------------------------------------------------------------------------------------------
+5) fieldset and input use togather, fieldset template reference var can't get input status
+   reason:
+            <fieldset #toePicker (click)="toeChoicer(toePicker)">
+                <div *ngFor="let hero of heroes; let ind=index">
+                    <div><input type="radio" name="toe" value="{{ind}}">{{hero.name}}</div>
+                 </div>
+            </fieldset> 
+        input before can't have div , toePicker can't get input checked status,toePicker.childeren[i].checked
+        is undefined.
+    as following also doesn't work
+           <fieldset #toePicker (click)="toeChoicer(toePicker)">
+                <div *ngFor="let hero of heroes; let ind=index">
+                   <input type="radio" name="toe" value="{{ind}}">{{hero.name}}
+                 </div>
+            </fieldset> 
+     solution:
+        is not better one. 
+           <fieldset #toePicker (click)="toeChoicer(toePicker)" *ngFor="let hero of heroes; let ind=index">
+                    <input type="radio" name="toe" value="{{ind}}">{{hero.name}}
+            </fieldset>
+        but after render like as following
+            <fieldset><input type="radio" name="toe" value="{{ind}}">{{hero.name}}</fieldset>
+            <fieldset><input type="radio" name="toe" value="{{ind}}">{{hero.name}}</fieldset>
+            <fieldset><input type="radio" name="toe" value="{{ind}}">{{hero.name}}</fieldset>
+        no #toePicker and (click)="toeChoicer(toePicker)" but can do click event
+
+        below is better no very much
+            <fieldset #toePicker (click)="toeChoicer(toePicker)" >
+               <input type="radio" value="0">name0
+               <input type="radio" value="1">name1
+               <input type="radio" value="2">name2
+            </fieldset>
+        no #toePicker and (click)="toeChoicer(toePicker)" but can do click event, so this sounds like
+        actuly no #toePicker and (click)="toeChoicer(toePicker)" is correct after angular render 
+
+        HAVE BETTER SOLUTION：
+            fieldset can have any div or label and then have input,example as:
+            <fieldset #toePicker (click)="toeChoicer(toePicker)">
+               <label  *ngFor="let hero of heroes; let ind=index">
+                     <input type="radio" value="{{ind}}" name="toes">
+                     {{hero.name}}
+               </label>
+            </fieldset>
+        but should find input use childern method
+               toeChoicer(picker:HTMLFieldSetElement):void{
+                console.log(picker);
+                let choices=picker.children;
+                for (var i=0; i<choices.length;i++){
+                        let choice=choices[i].children[0] as HTMLInputElement;
+                    if(choice.checked){
+                            this.toeChoice=choice.value;
+                    }
+                    console.log(choice.checked);
+                }
+                }
+-----------------------------------------------------------------------------------------
+6)  {{heroes[0].name}}  error 0 undefined property and name undefined property
+     RESAON:
+             async get heroes so render heroes[0].name before get heroes
+             (but strangely for ngfor="let hero of heroes" is work well)
+     SOLUTION:
+             for those nested array should set inside <div *ngIf="heroes"></div>
+             to be sure heroes is not null.
+             be careful! only wrap nested array or one item of array or one item 's proerty
+             for propery someone surgest to use like heroe.name?.first
+------------------------------------------------------------------------------------------
+7) lazy router don't appear 
+    RESAON:
+           const routes:Routes=[
+            {
+                path:'learning',
+                component:LearningComponent,
+                children:[
+                    {
+                        path:'',
+                        redirectTo:'heroForm',
+                        pathMatch:'full'
+                    },
+                    {
+                        path:'learnUserinput',
+                        component:LearnUserinputComponent
+                    },
+                    {
+                        path:'heroForm',
+                        component:HeroFormComponent
+                    }
+                ]
+            }
+            ];
+         have no as following for default router
+            {
+                path:'',
+                redirectTo:'learning',
+                pathMatch:'full'
+            },
+-------------------------------------------------------------------------------------------
+8) input property of source's difference "" and "''"   
+   the template of component that apply directive :
+     <h2 [xxjHighlight]='yellow'  [xxjDefaultColor]="green">Below section for learning angular</h2>
+   directive:
+        @Input ('xxjHighlight') highlightColor:string;
+        @Input () set xxjDefaultColor(color:string){
+            this._defaultColor=color;
+        };
+    DIRECTIVE DOESN'T WORK !
+    Solution:
+         <h2 [xxjHighlight]='yellow'  [xxjDefaultColor]="'green'">Below section for learning angular</h2>
+    Because [xxjDefaultColor] 's right is expression, the part inside "",so [xxjDefaultColor]="green"
+    means pass green not string to xxjDefaultColor.
+-----------------------------------------------------------------------------------------------
+9)inside template link css file doesn't work
+    template:`
+              <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+              ...
+              `
+    check chrome Devtool loaded bootstrap but doesn't affect dom view and found bootstrap inside one
+    of style tags which have added angular 's weird ngcontent-pmp-3 something like this.
+-------------------------------------------------------------------------------------------------
+10) Pay attention inside console.log done method like:
+     console.log(this.someservice.SomeFunction()) so SomeFunction done
+      export class HeroEditorComponent{
+       .......
+            onCancel(){
+                this.hero=this.rS.restoreItem();
+                 console.log(this.rS.restoreItem());    <=== done twice 
+                this.canceled.emit(this.hero);
+            }
+        }
+    above example done "this.rS.restoreItem()" two time make unexpected result.
+-----------------------------------------------------------------------------------------------------
+11) expression inside component's template change dynamicly Error
+    template:'....
+             <div>You choose {{choosePane}}</div>
+             ...'
+    choosePane:number;
+    @ViewChild(PaneComponent) 
+       set pane(v:PaneComponent){
+    //    setTimeout(()=>this.choosePane=v.id,0);
+       this.choosePane=v.id;   <====ERROR
+    }; 
+    toggle():void{
+        this.showBool=!this.showBool;
+    }
+    Error like:
+    core.umd.js:2837 EXCEPTION: Error in ./TabComponent class TabComponent - inline template:6:17 
+    caused by: Expression has changed after it was checked. Previous value: 'You choose 1'. 
+    Current value: 'You choose 2'.
+    Solution:
+         reason is we have give a loop userally setTimeout if change some data inside template
+-------------------------------------------------------------------------------------------------
+12) Router error but show something other you can't get what happen. like this:
+      core.umd.js:3491 EXCEPTION: Uncaught (in promise): TypeError: Cannot set property 'name' 
+      of undefined TypeError: Cannot set property 'name' of undefined 
+       at new EmptyError (http://localhost:3000/node_modules/rxjs/util/EmptyError.js:21:30)
+        at FirstSubscriber._complete (http://localhost:3000/node_modules/rxjs/operator/first.js:148:31)
+        at FirstSubscriber.Subscriber.complete (http://localhost:3000/node_modules/rxjs/Subscriber.js:114:18)
+        at MergeAllSubscriber._complete (http://localhost:3000/node_modules/rxjs/operator/mergeAll.js:94:30)
+        at MergeAllSubscriber.Subscriber.complete (http://localhost:3000/node_modules/rxjs/Subscriber.js:114:18)
+        at MapSubscriber.Subscriber._complete (http://localhost:3000/node_modules/rxjs/Subscriber.js:132:26)
+        at MapSubscriber.Subscriber.complete (http://localhost:3000/node_modules/rxjs/Subscriber.js:114:18)
+        at ArrayObservable._subscribe (http://localhost:3000/node_modules/rxjs/observable/ArrayObservable.js:116:24)
+        at ArrayObservable.Observable.subscribe (http://localhost:3000/node_modules/rxjs/Observable.js:45:27)
+        at Observable._subscribe (http://localhost:3000/node_modules/rxjs/Observable.js:103:28)
+        at MapOperator.call (http://localhost:3000/node_modules/rxjs/operator/map.js:54:23)
+        at Observable.subscribe (http://localhost:3000/node_modules/rxjs/Observable.js:42:22)
+        at Observable._subscribe (http://localhost:3000/node_modules/rxjs/Observable.js:103:28)
+        at MergeAllOperator.call (http://localhost:3000/node_modules/rxjs/operator/mergeAll.js:63:23)
+        at Observable.subscribe (http://localhost:3000/node_modules/rxjs/Observable.js:42:22)ErrorHandler.handleError @ core.umd.js:3491next @ core.umd.js:8449schedulerFn @ core.umd.js:4118SafeSubscriber.__tryOrUnsub @ Subscriber.ts:238SafeSubscriber.next @ Subscriber.ts:190Subscriber._next @ Subscriber.ts:135Subscriber.next @ Subscriber.ts:95Subject.next @ Subject.ts:61EventEmitter.emit @ core.umd.js:4104NgZone.triggerError @ core.umd.js:4465onHandleError @ core.umd.js:4426ZoneDelegate.handleError @ zone.js:246Zone.runGuarded @ zone.js:129_loop_1 @ zone.js:429drainMicroTaskQueue @ zone.js:438ZoneTask.invoke @ zone.js:349
+        core.umd.js:3496 ORIGINAL STACKTRACE:ErrorHandler.handleError @ core.umd.js:3496next @ core.umd.js:8449schedulerFn @ core.umd.js:4118SafeSubscriber.__tryOrUnsub @ Subscriber.ts:238SafeSubscriber.next @ Subscriber.ts:190Subscriber._next @ Subscriber.ts:135Subscriber.next @ Subscriber.ts:95Subject.next @ Subject.ts:61EventEmitter.emit @ core.umd.js:4104NgZone.triggerError @ core.umd.js:4465onHandleError @ core.umd.js:4426ZoneDelegate.handleError @ zone.js:246Zone.runGuarded @ zone.js:129_loop_1 @ zone.js:429drainMicroTaskQueue @ zone.js:438ZoneTask.invoke @ zone.js:349
+       
+       Actuly, error come from :
+        <a routerLink="/learning/learnUserinput" <== ERROR should be "./learnUserinput"
+               routerLinkActive="active" class="learning-route">User input</a>
+       but router version "~3.2.0" low "~3.3.0" can work,there is another wired thing is
+       url path show in browser is "localhost:3000/learning/learning/learnUserinput", double
+       learning. until now I didn't find reasons.
+------------------------------------------------------------------------------------------------
+13) Error
+     
+     reason:
+         const routes:Routes=[
+            {
+                path:'learning',
+                component:LearningComponent
+            },
+            {
+                path:'learning',  <==ERROR  SHOULD BE '', OTHERWISE URL '/learning/learning/...
+                component:LearningComponent,
+                children:[
+                    {
+                        path:'',
+                        redirectTo:'templateSyntax',
+                        pathMatch:'full'
+                    },....]
+      code can work well but url have double "/learning/learning/.."
+------------------------------------------------------------------------------------------------
+14)npm update BE CAREFUL! because every angular module's peerDependencies is changing a lot
+    angular-quickstart-nov21@1.0.0 /Users/apple/Documents/xixijiu_ng-md/angular-quickstart-nov21
+├── @angular/common@2.2.4
+├── @angular/compiler@2.2.4
+├── @angular/core@2.2.4
+├── @angular/forms@2.2.4
+├── @angular/http@2.2.4
+├── @angular/platform-browser@2.2.4
+├── @angular/platform-browser-dynamic@2.2.4
+├── @angular/router@3.2.4
+├── @angular/upgrade@2.2.4
+├── @types/core-js@0.9.35
+├── @types/node@6.0.52
+├── angular-in-memory-web-api@0.1.17
+├── bootstrap@3.3.7
+├── concurrently@3.1.0
+├── core-js@2.4.1
+├── lite-server@2.2.2
+├── reflect-metadata@0.1.8
+├── UNMET PEER DEPENDENCY rxjs@5.0.0-rc.4 invalid
+├── systemjs@0.19.39
+├── typescript@2.1.4
+├── web-animations-js@2.2.2
+└── UNMET PEER DEPENDENCY zone.js@0.6.26
+
+npm ERR! peer dep missing: rxjs@5.0.0-beta.12, required by @angular/core@2.2.4
+npm ERR! peer dep missing: rxjs@5.0.0-beta.12, required by @angular/http@2.2.4
+npm ERR! peer dep missing: rxjs@5.0.0-beta.12, required by @angular/router@3.2.4
+npm ERR! peer dep missing: zone.js@^0.7.2, required by angular-in-memory-web-api@0.1.17
+
+then I use new Dec/19 's quickstart package.json (not system.config.json) and npm install
+something like this:
+
+angular-quickstart@1.0.0 /Users/apple/Documents/xixijiu_ng-md/angular-quickstart-nov21
+├── @angular/common@2.3.1 
+├── UNMET PEER DEPENDENCY @angular/compiler@2.3.1
+├── UNMET PEER DEPENDENCY @angular/core@2.3.1
+├── @angular/forms@2.3.1 
+├── @angular/http@2.3.1 
+├── UNMET PEER DEPENDENCY @angular/platform-browser@2.3.1
+├── UNMET PEER DEPENDENCY @angular/platform-browser-dynamic@2.3.1
+├── @angular/router@3.3.1 
+├── @types/jasmine@2.5.38 
+├── @types/selenium-webdriver@2.53.37 
+├── angular-in-memory-web-api@0.2.1 
+├── canonical-path@0.0.2 
+├─┬ http-server@0.9.0 
+........
+npm WARN @angular/upgrade@2.2.4 requires a peer of @angular/compiler@2.2.4 but none was installed.
+npm WARN @angular/upgrade@2.2.4 requires a peer of @angular/core@2.2.4 but none was installed.
+npm WARN @angular/upgrade@2.2.4 requires a peer of @angular/platform-browser@2.2.4 but none was installed.
+npm WARN @angular/upgrade@2.2.4 requires a peer of @angular/platform-browser-dynamic@2.2.4 but none was installed.
+
+and this version quickstart no upgrade module and system.config.json has no upgrade module
+-------------------------------------------------------------------------------------------------
+15) how to use  ng-content 
+    read this url  https://scotch.io/tutorials/angular-2-transclusion-using-ng-content
+-------------------------------------------------------------------------------------------------
+16) how to dynamic create component in one component
+   read this url   http://blog.rangle.io/dynamically-creating-components-with-angular-2/
+-------------------------------------------------------------------------------------------------
+17)How to use and what is difference and what is @ViewChild @ViewChildren @ContentChild @ContentChildren
+    @ViewChild   only can work on first element and directive according to angular.io's "You can use 
+    ViewChild to get the first element or the directive matching the selector from the view DOM. 
+    If the view DOM changes, and a new child matches the selector, the property will be updated."
+@ViewChild-----------------------------------
+    BUT I TRY SOMETHING IS DIFFERENT:
+    Example....
+    template: `<h2>This example show how to create components dynmicly</h2>
+               <button #btnOne (click)="createHelloChinaComp()">Create HelloChina</button>
+               <button #btnTwo (click)="createHelloUsaComp()">Create HelloUSA</button>
+               <test-viewchild></test-viewchild>
+               <dynamic-comp [compData]="componentData">
+                
+                 <test-contentchild></test-contentchild>
+               </dynamic-comp>
+    ....
+    
+         @ViewChild(ElementRef) someCalled:QueryList<ElementRef>  ----someCalled result is null
+         @ViewChild(HTMLElement) someCalled:QueryList<HTMLElement>  ----someCalled result is null
+         @ViewChild("button") someCalled:QueryList<any>  ----someCalled result is null
+         @ViewChild("h2") someCalled:QueryList<any>  ----someCalled result is null
+    
+         @ViewChild("btnOne") someCalled:QueryList<any>  ----work well
+         @ViewChild(TestViewchildComponent) someCalled:QueryList<TestViewchildComponent>  ----work well
+         and believe @ViewChild(SomeDirective) someCalled:QueryList<SomeDirective> ------ will work well
+
+    Have results:
+     a)    @ViewChildren(somethingComp) called:somethingComp
+           @ViewChildren(somethingComp) called:QueryList<somethingComp>
+           @ViewChild('dynamicCompContainer',{read:ViewContainerRef}) 
+                              dynamicCompContainer:ViewContainerRef;
+     b)   
+            @ViewChildren(selector)  
+               selector only work template reference variable (or those variable list)
+                  and component and directive
+     c)    @ViewChildren(Type(T)) someName:Type(T)  ===
+           @ViewChildren(Type(T),{read:ViewContainerRef}) someName:ViewContainerRef  ===
+           @ViewChildren(Type(T)) someName:QueryList<Type(T))  ===
+           @ViewChildren("templateReferenceVar",{read:ViewContainerRef}) someName:ViewContainerRef
+           
+           all of them get someName:QueryList<Type<T>>
+    
+@ContentChild-----------------------------------
+  ......
+   @Component({
+    selector: 'create-comp',
+    template: `<h2>This example show how to create components dynmicly</h2>
+               <button #btnOne (click)="createHelloChinaComp()">Create HelloChina</button>
+               <button #btnTwo (click)="createHelloUsaComp()">Create HelloUSA</button>
+               <test-viewchild></test-viewchild>
+               <dynamic-comp [compData]="componentData">
+                 <div class="testContent">Content for ng-content and @ContentChildren</div>
+                 <test-contentchild></test-contentchild>
+               </dynamic-comp>
+               `,
+        .....
+})
+export class CreateCompComponent implements AfterViewInit,AfterContentInit {
+    @ViewChildren("btnOne") vcList:QueryList<any>;
+ERROR => @ContentChildren(TestContentchildComponent) ccList:QueryList<TestContentchildComponent>;
+
+     this place can't get ContentChildren because <test-contentchild> is inside <dynamic-comp>
+     so <test-contentchild> is <dynamic-comp>'s ContentChild,
+     get ContentChildren should set it inside <dynamic-comp>
+...
+should be like this:
+   .....
+   export class DynamicCompComponent implements AfterContentInit{
+    @ContentChildren(TestContentchildComponent) ccList:QueryList<TestContentchildComponent>;
+   ......
+But for DOM only reference variable can be selector like @ViewChild
+
+About @ContentChild data flow direction
+       a)  parent -- set template inside child's tag
+       b)  child  -- get data inside above template use @ContentChild(TemplateRef)
+       c)  child  -- set this data inside child's view
+    conclusion: parent(data) =>child ContentChild get => child show in parent
+                this ContentChild working way,the way is :
+                     a) through template and templateRef 
+                     b) through component and directive
+
+@Query---------------------------
+  angluar.io has one example inside api reference of Query like :
+  ....
+  items: QueryList<Item>;
+  constructor(@Query(Item) items:QueryList<Item>) {
+  ....
+  but new version ng has no QueryDecorator
+...............................................................
+   read url http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders/
+        and https://github.com/dsebastien/angularConnect2015London/blob/master/14%20Better%20concepts%20less%20code%20in%20Angular%202.md
+-------------------------------------------------------------------------------------------------------------------
+18) What is difference between viewProviders and providers?
+    read url http://blog.mgechev.com/2016/01/23/angular2-viewchildren-contentchildren-difference-viewproviders/
+-------------------------------------------------------------------------------------------------------------------
+19) ngTemplateOutlet and ngOutletContext---- new way to enter html to view or template
+    read learning/learn-ngoutlet/...
+    new way to pass data throught template and contentchild:
+       a)  parent -- set template inside child's tag
+       b)  child  -- get data inside above template use @ContentChild(TemplateRef)
+       c)  child  -- set this data inside child's view
+    conclusion: parent(data) =>child ContentChild get => child show in parent
+                this ContentChild working way,in this example through template and templateRef 
+    Two ways to set context and templateOutlet:
+       a)  data's view showing set by <template #templateRefVar > ...</template>
+           data get from ngOutletContext, and set ngTemplateOutlet="templateRefVar"
+       b)  data set inside <childcomp>...<template>data</template>...</childcomp>
+           get this templateRef by @ContentChild,set childcomp's ngTemplateOutlet="templateRef",
+           this ...<template>data</template>.. take as data, ngOutletContext not set.
+    
+-----------------------------------------------------------------------------------------------------
+20)  Difference between geting data from parent of @ContentChild and ng-content
+       same point :a) both should set child comp inside parent comp 
+                   b) both should set data inside parent comp
+       difference :a) @ContentChild data inside template or third comp
+                      ng-content data inside opening and closing child tag with some selector which set in child's ng-content
+                   b) @ContentChild should use inside child comp to get data,then use it AfterContentInit in child comp
+                      ng-content set select attribute, no more to do, but can dynamicly use inside child comp
+------------------------------------------------------------------------------------------------------
+21) Communicate between parent and child component
+    USE IN PARENT
+     a) set template reference varible inside parent,parent use directly "templateReferenceVar"
+        in parent's TEMPLATE
+     b) use @ViewChildren to get child comp. inside parent component, then use it inside 
+        parent's Component
+    USE IN child
+        in parent like:
+        <child-cmp>.. <template>..</template>..</child-cmp>
+        use @ContentChild to get this template's TemplateRef inside child component
+     a) use ngTemplateOutlet to set TemplateRef and  ngOutletContext to set Data 
+     b) use template 's build-in directive's property binding TemplateRef, example
+        use ngFor's [ngForTemplate]="TemplateRef"
+     c) use custom template's directive to pass in data and TemplateRef, 
+        look excellent example but complicative solution
+        https://www.bennadel.com/blog/3101-experimenting-with-dynamic-template-rendering-in-angular-2-rc-1.htm
+    USE IN parent and child
+     a) through one service communicate, example in cookbook's component interactive
+        STUDY THIS EXAMPLE !
+-------------------------------------------------------------------------------------------------------
+22) Custom similar ngFor directive
+    see example: https://teropa.info/blog/2016/03/06/writing-an-angular-2-template-directive.html
+-------------------------------------------------------------------------------------------------------
+23) Pass data between routes
+
+    One Route(HeroesComp)              <====>   |    Another Route(HeroDetailComp)
+    oninit(){ }                                 |    button back function
+     this.route.parms.switchMap                 |    this.navigate(['/heroes',{id:heroId,someFun:'someFun'});
+     get id                                     |    back '/heroes' path with URL path like
+     Correct:                                   |    localhost:3000/heroes;id=17;foo=foo
+         this.route.params.map(params=>..)      |
+             .subscribe(id=>.. get id .. or foo)|
+
+    but I got some Observable problems on HeroesComp doesn't work. SHOULD change lot and I don't
+    understand Rxjs very well, do later until i know rxjs 5.00 more.
+    Found solution:
+             this.route.params.map(params=>{console.log(params['id']);return params['id'];})
+                       .subscribe(id=>{this.detailSelectedId=+id;
+                                       console.log(id);
+                                      });
+    try to use @Output, finally found those two component have no connection, not parent and child
+    so doesn't work also.
+-------------------------------------------------------------------------------------------------------
+24) pass data through route config from main route to child route
+    {path:'hero-detail', component:HeroDetailComp,data:[{sendSome:"OK!"}]}
+    get data inside child route component (HeroDetailComp) like :
+    constructor(private route:ActivatedRoute){
+        this.passedData=this.route.snapshot.data[0]['sendSome'];
+    }
+-------------------------------------------------------------------------------------------------------
+25) pass data through routerLink from main route to child route
+       <a [routerLink]="['/product-details', product.id]">
+       route config:
+       {path:'hero-detail/:id', component:HeroDetailComp}
+-------------------------------------------------------------------------------------------------------
+26)  Routing config:
+     a)no lazy load router with routing module and without routing module 
+     
+     b) lazy load router  with routing module and without routing module
+------------------------------------------------------------------------------------------------------
+27)  Where set services inside providers? Root app, module-level and component-level
+     Root app === eagerly load module-level    for everyone in app
+     no eagerly load module-level              for everyone in module
+     component                                 for this component
+--------------------------------------------------------------------------------------------------------
+28)  Complex import services
+     folder:  
+     -------------------------------------------------------------------------------------------------           
+      root                      | routing guard                          | import and provider
+                                |   --no use guard and auth services     |
+                PAY ATTENTION: import and providers auth and guard services,so admin and login
+                               use one instaince 
+     --------------------------------------------------------------------------------------------------
+      admin                     | use guard service                      | import only
+                                |                                        | can provider in module
+                ERROR: if auth and guard only import and provider in admin, login will instaince
+                       another AuthService, so doesn't work
+     ------------------------------------------------------------------------------------------------
+      auth services             | guard service use inside auth service  | import only
+       (one auth one guard)     |
+     ------------------------------------------------------------------------------------------------
+      login                     | use auth service                       | import and provider
+                PAY ATTENTION: if import and provider in root, no need import or provider in login
+     -------------------------------------------------------------------------------------------------
+     problem:
+        auth service should be singleton in whole app.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+29) Difference between canActivate and canActivateChild
+     As we learned about guarding routes with CanActivate, we can also protect child routes with 
+     the CanActivateChild guard. The CanActivateChild guard works similarly to the CanActivate guard, 
+     but the difference is its run before each child route is activated. We protected our admin 
+     feature module from unauthorized access, but we could also protect child routes within our 
+     feature module.
+
+     Here's a practical example:
+
+    1) navigating to /admin
+    2) canActivate is checked
+    3) You navigate between the children of /admin route, but canActivate isn't called because it 
+       protects /admin 
+    4) canActivateChild is called whenever changing between children of the route its defined on.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+30) CanActivate and CanActiveChild using
+    A)    routing config --- set Guard 
+    B)    Guard service
+    C)    guard by what service -- i.e. user if loggin or permission
+    D)    login or permission related component or service 
+                               -- usally should connect to remote database asynchronously
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+31) Pass Queryparams and fragment between routers
+    A)  sent by router.navigate(['./otherpath'],{prop1:'xx',prop2:'yy'});
+        receive through ActivatedRoute.params.map(params=>params['prop1']).subscribe(...);
+    B)  This way much complex:
+        Service 
+           1)  set NavigationExtras={queryparams:{prop:'xxx'},fragment:'yyy'},
+           2)  send through navigate(['./agentComponent'],navigationExtras) to agent Component
+        agent component 
+           1)  set navigationExtras={preseveQueryParams:true,preseveFragment:true}
+           2)  send through navigate(['./destinationPath'],navigationExtras)
+        destination
+           use ActivatedRoute to get QueryParams and fragment
+
+        url path like :  http://localhost:3000/admin?session-id=1234567#anchor
+    C)  Use routerLink
+            <a [routerLink]="['/user/bob']" [queryParams]="{debug: true}" fragment="education">
+                     link to user component
+            </a>
+        url path like:     /user/bob#education?debug=true
+        can set preseve 
+                <a [routerLink]="['/user/bob']" preserveQueryParams preserveFragment>
+                    link to user component
+                </a>
+*********************************************************************************************
+above collections is under ng2
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+below collections is under ng4
+*********************************************************************************************
+
+This is collections of all kinds of errors and solutions.
+**********************************************************************************************
+32) templateUrl url set cause errors
+   ERRORS:
+            Unhandled Promise rejection: Template parse errors:
+            'app' is not a known element:
+            1. If 'app' is an Angular component, then verify that it is part of this module.
+            2. To allow any element add 'NO_ERRORS_SCHEMA' to the '@NgModule.schemas' of this 
+            component. ("
+            </head>
+            <body>
+                [ERROR ->]<app>
+                <h1>Loading...</h1>
+                </app>
+            "): ng:///signup.component.html@19:4 ; Zone: <root> ; Task: Promise.then ; 
+            Value: Error: Template parse errors:
+  Clues:
+        a) AppComponent's selector 'app' unknow, check AppComponent is correct
+        b) googling some from stackoverflow's solution set CUSTOM_ELEMENTS_SCHEMA, doesn't work
+  Debuging:
+       a) cut AuthenticationModule and HomeModule, empty AppRoutingModule's routes config,
+          AppComponent work well
+       a-step result)  routing config problem
+       b) change serveral way to config AppRouting and AuthRouting and HomeRouting, doesn't work
+       b-step reslut)   routing config is correct
+       c)find 'ng:///signup.component.html@19:4' , add and delete  router-outle, doesn't work
+       d)read some articles about ng 4, all of them said new feature from ng 4 is that don't
+         need moduleid again for relative url, so I set signup't templateUrl relative url,
+         (and home.component.html and authentication.component.html)
+       e) after all ways i can find is failure, I try to set templateurl absolute url, it
+          work like charm.
+
+Solution: 
+   A) set absolute Url for templateUrl
+   B) templateUrl relative url start with './'
+**********************************************************************************************
+33) comment templateUrl line inside @Component
+   ERRORS:
+            Error: (SystemJS) No template specified for component AuthenticationComponent
+            Error: No template specified for component AuthenticationComponent
+                at syntaxError (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:1513:34) [<root>]
+                at DirectiveNormalizer.normalizeTemplate (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:12809:19) [<root>]
+                at CompileMetadataResolver._loadDirectiveMetadata (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:13734:75) [<root>]
+                at eval (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:13927:54) [<root>]
+                at Array.forEach (native) [<root>]
+                at CompileMetadataResolver.loadNgModuleDirectiveAndPipeMetadata (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:13926:41) [<root>]
+                at eval (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:25094:58) [<root>]
+                at Array.forEach (native) [<root>]
+                at JitCompiler._loadModules (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:25093:43) [<root>]
+                at JitCompiler._compileModuleAndComponents (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:25047:52) [<root>]
+                at JitCompiler.compileModuleAsync (http://localhost:3000/lib/@angular/compiler//bundles/compiler.umd.js:25009:21) [<root>]
+                at PlatformRef_._bootstrapModuleWithZone (http://localhost:3000/lib/@angular/core//bundles/core.umd.js:4793:25) [<root>]
+                at PlatformRef_.bootstrapModule (http://localhost:3000/lib/@angular/core//bundles/core.umd.js:4779:21) [<root>]
+                at Object.eval (http://localhost:3000/app/../main.js:5:53) [<root>]
+            Evaluating http://localhost:3000/app/../main.js
+    Clues:
+         changed templateUrl to inner template and comment templateUrl in old position inside
+         @Component, throwed above errors, so suspect comment inside @Component cause errors
+    Solution:
+         delete comment templateUrl, error disappear.
+************************************************************************************************
+34) singleton service for whole app setting position
+   from ng4 use core module set in root module
+************************************************************************************************
+35) Set module scope service always error :  no provider for ArticlesService
+    ERROR Error: Uncaught (in promise): Error: No provider for ArticlesService!
+    
+     set a) module.ts file articles.component can get service, other components can't 
+     set b) inside articles.component.ts same result like a)
+     set c) app.module also same result like a)
+
+     no issue report in github and no comments on stackoverflow, I have to set this 
+     service in core.module to let it become app-scope service and singleton service
+     It is bad solution I know, no choice untill now.
+     Guess: ng 4.0.1 or 4.0.2 have bug? or new design pattern?
+********************************************************************************************
+36) Error:
+    Error: (SystemJS) Unexpected token <
+	SyntaxError: Unexpected token <
+	    at eval (<anonymous>)
+	    at ZoneDelegate.invoke (http://localhost:3000/lib/zone.js/dist/zone.js:365:26)
+	    at Zone.run (http://localhost:3000/lib/zone.js/dist/zone.js:125:43)
+	    at http://localhost:3000/lib/zone.js/dist/zone.js:758:57
+	    at ZoneDelegate.invokeTask (http://localhost:3000/lib/zone.js/dist/zone.js:398:31)
+	Evaluating http://localhost:3000/app/main.js
+	Error loading http://localhost:3000/app/main.js
+	    at eval (<anonymous>)
+	    at ZoneDelegate.invoke (http://localhost:3000/lib/zone.js/dist/zone.js:365:26)
+	    at Zone.run (http://localhost:3000/lib/zone.js/dist/zone.js:125:43)
+	    at http://localhost:3000/lib/zone.js/dist/zone.js:758:57
+	    at ZoneDelegate.invokeTask (http://localhost:3000/lib/zone.js/dist/zone.js:398:31)
+	Evaluating http://localhost:3000/app/main.js
+	Error loading http://localhost:3000/app/main.js
+
+according to stackoverflow url http://stackoverflow.com/questions/34387174/angular-2-quickstart-unexpected-token
+in Chrome Dev tool network tab check which loading module (js file) respone was not js file
+but html file, find socket.io-client.js respone file is html, so guess socket.io-client set in
+system.config.js have some errors.
+
+Set systm.config.js like as following for above error.
+var packages = {
+    ....
+    'socket.io-client': {main: './socket.io.js'}
+  };
+  var map = {
+      ....
+    'socket.io-client': 'lib/socket.io-client/dist'
+  };
+And install @type/socket.io-client  for typescript define type
+*******************************************************************************************
+37) Karma test use Phanotmjs browser get Error:
+        25 04 2017 20:22:04.835:INFO [karma]: Karma v1.6.0 server started at http://0.0.0.0:9876/
+        25 04 2017 20:22:04.881:INFO [launcher]: Launching browser PhantomJS with unlimited concurrency
+        25 04 2017 20:22:04.974:INFO [launcher]: Starting browser PhantomJS
+        25 04 2017 20:22:14.034:INFO [PhantomJS 2.1.1 (Mac OS X 0.0.0)]: Connected on socket bgTzukQWQJI2DTXYAAAA with id 30317724
+        PhantomJS 2.1.1 (Mac OS X 0.0.0) ERROR
+        ReferenceError: Can't find variable: module
+        at public/systemjs-angular-loader.js:5
+
+    delet system-angular-loader.js in system.config.js get errors following:
+    
+    25 04 2017 20:33:27.361:INFO [karma]: Karma v1.6.0 server started at http://0.0.0.0:9876/
+25 04 2017 20:33:27.413:INFO [launcher]: Launching browser PhantomJS with unlimited concurrency
+25 04 2017 20:33:27.504:INFO [launcher]: Starting browser PhantomJS
+25 04 2017 20:33:33.562:INFO [PhantomJS 2.1.1 (Mac OS X 0.0.0)]: Connected on socket dxF99cg3saA811sTAAAA with id 69524125
+25 04 2017 20:33:35.586:WARN [web-server]: 404: /chat.component.html
+25 04 2017 20:33:35.592:WARN [web-server]: 404: /create.component.html
+25 04 2017 20:33:35.593:WARN [web-server]: 404: /list.component.html
+25 04 2017 20:33:35.593:WARN [web-server]: 404: /view.component.html
+25 04 2017 20:33:35.594:WARN [web-server]: 404: /edit.component.html
+25 04 2017 20:33:35.595:WARN [web-server]: 404: /authentication.component.html
+25 04 2017 20:33:35.596:WARN [web-server]: 404: /signin.component.html
+25 04 2017 20:33:35.597:WARN [web-server]: 404: /signup.component.html
+25 04 2017 20:33:35.597:WARN [web-server]: 404: /home.component.html
+PhantomJS 2.1.1 (Mac OS X 0.0.0): Executed 0 of 8 SUCCESS (0 secs / 0 secs)
+25 04 2017 20:33:35.710:WARN [web-server]: 404: /chat.component.html
+PhantomJS 2.1.1 (Mac OS X 0.0.0) AppComponent Routing Should navigate to home FAILED
+	Failed: Uncaught (in promise): Failed to load chat.component.html
+	resolvePromise@node_modules/zone.js/dist/zone.js:711:78
+	resolvePromise@node_modules/zone.js/dist/zone.js:681:31
+	node_modules/zone.js/dist/zone.js:758:31
+	invokeTask@node_modules/zone.js/dist/zone.js:398:36
+	onInvokeTask@node_modules/zone.js/dist/proxy.js:103:49
+	invokeTask@node_modules/zone.js/dist/zone.js:397:48
+	runTask@node_modules/zone.js/dist/zone.js:165:57
+	drainMicroTaskQueue@node_modules/zone.js/dist/zone.js:591:42
+	g@node_modules/core-js/client/shim.min.js:8:19058
+	node_modules/core-js/client/shim.min.js:8:19180
+	k@node_modules/core-js/client/shim.min.js:8:14294
+	Error: Cannot make XHRs from within a fake async test. in node_modules/zone.js/dist/fake-async-test.js (line 224)
+	onScheduleTask@node_modules/zone.js/dist/fake-async-test.js:224:95
+	onScheduleTask@node_modules/zone.js/dist/proxy.js:92:53
+	scheduleTask@node_modules/zone.js/dist/zone.js:378:65
+	scheduleTask@node_modules/zone.js/dist/zone.js:209:55
+	scheduleMacroTask@node_modules/zone.js/dist/zone.js:232:37
+	node_modules/zone.js/dist/zone.js:2188:42
+	send
+	get
+	_fetch
+	normalizeTemplateAsync
+	normalizeTemplate
+	_loadDirectiveMetadata
+	forEach@[native code]
+	loadNgModuleDirectiveAndPipeMetadata
+	forEach@[native code]
+	_loadModules
+	_compileModuleAndAllComponents
+	compileModuleAndAllComponentsSync
+	compileModuleAndAllComponentsSync
+	_initIfNeeded
+	createComponent
+	createComponent
+	invoke@node_modules/zone.js/dist/zone.js:365:31
+	onInvoke@node_modules/zone.js/dist/proxy.js:79:45
+	invoke@node_modules/zone.js/dist/zone.js:364:40
+	run@node_modules/zone.js/dist/zone.js:125:49
+	node_modules/zone.js/dist/jasmine-patch.js:104:37
+	invoke@node_modules/zone.js/dist/zone.js:365:31
+	onInvoke@node_modules/zone.js/dist/async-test.js:49:45
+	onInvoke@node_modules/zone.js/dist/proxy.js:76:47
+	invoke@node_modules/zone.js/dist/zone.js:364:40
+	run@node_modules/zone.js/dist/zone.js:125:49
+	onHandleError@node_modules/zone.js/dist/async-test.js:59:31
+	onHandleError@node_modules/zone.js/dist/proxy.js:84:52
+	handleError@node_modules/zone.js/dist/zone.js:369:50
+	runGuarded@node_modules/zone.js/dist/zone.js:141:55
+	_loop_1@node_modules/zone.js/dist/zone.js:602:61
+	drainMicroTaskQueue@node_modules/zone.js/dist/zone.js:611:28
+	g@node_modules/core-js/client/shim.min.js:8:19058
+	node_modules/core-js/client/shim.min.js:8:19180
+	k@node_modules/core-js/client/shim.min.js:8:14294
+	TypeError: undefined is not an object (evaluating 'location.go') (line 22)
+	invoke@node_modules/zone.js/dist/zone.js:365:31
+	onInvoke@node_modules/zone.js/dist/proxy.js:79:45
+	invoke@node_modules/zone.js/dist/zone.js:364:40
+	run@node_modules/zone.js/dist/zone.js:125:49
+	node_modules/zone.js/dist/jasmine-patch.js:104:37
+	invoke@node_modules/zone.js/dist/zone.js:365:31
+	onInvoke@node_modules/zone.js/dist/async-test.js:49:45
+	onInvoke@node_modules/zone.js/dist/proxy.js:76:47
+	invoke@node_modules/zone.js/dist/zone.js:364:40
+	run@node_modules/zone.js/dist/zone.js:125:49
+	onHandleError@node_modules/zone.js/dist/async-test.js:59:31
+	onHandleError@node_modules/zone.js/dist/proxy.js:84:52
+	handleError@node_modules/zone.js/dist/zone.js:369:50
+	runGuarded@node_modules/zone.js/dist/zone.js:141:55
+	_loop_1@node_modules/zone.js/dist/zone.js:602:61
+	drainMicroTaskQueue@node_modules/zone.js/dist/zone.js:611:28
+	g@node_modules/core-js/client/shim.min.js:8:19058
+	node_modules/core-js/client/shim.min.js:8:19180
+	k@node_modules/core-js/client/shim.min.js:8:14294
+
+this error caused obviously by missing system-angular-loader.js which is for set templateUrl 
+relative url.
+
+Solution:
+    del system-angular-loader.js in system.config.js
+    set templateUrl to absolute URL
+*******************************************************************************************
+38) routerLink and router path setting error 
+   ERROR as :
+    core.es5.js:1084 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'product'
+    Error: Cannot match any routes. URL Segment: 'product'
+    at ApplyRedirects.noMatchError (router.es5.js:1321) [angular]
+    at CatchSubscriber.selector (router.es5.js:1296) [angular]
+    at CatchSubscriber.error (catch.js:53) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at LastSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at LastSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MergeAllSubscriber.OuterSubscriber.notifyError (OuterSubscriber.js:22) [angular]
+    at InnerSubscriber._error (InnerSubscriber.js:26) [angular]
+    at InnerSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at ApplyRedirects.noMatchError (router.es5.js:1321) [angular]
+    at CatchSubscriber.selector (router.es5.js:1296) [angular]
+    at CatchSubscriber.error (catch.js:53) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MapSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at MapSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at LastSubscriber.Subscriber._error (Subscriber.js:128) [angular]
+    at LastSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at MergeAllSubscriber.OuterSubscriber.notifyError (OuterSubscriber.js:22) [angular]
+    at InnerSubscriber._error (InnerSubscriber.js:26) [angular]
+    at InnerSubscriber.Subscriber.error (Subscriber.js:102) [angular]
+    at resolvePromise (zone.js:710) [angular]
+    at resolvePromise (zone.js:681) [angular]
+    at :3000/build/polyfills.js:4642:17 [angular]
+    at Object.onInvokeTask (core.es5.js:4116) [angular]
+    at drainMicroTaskQueue (zone.js:591) [<root>]
+    at HTMLAnchorElement.ZoneTask.invoke (zone.js:464) [<root>]
+    at ____________________Elapsed_3_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_0_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/polyfills.js:4536:33 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_1_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/vendor.js:19244:25 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_0_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at ZoneAwarePromise.then (zone.js:845) [angular]
+    at :3000/build/vendor.js:19220:18 [angular]
+    at new ZoneAwarePromise (zone.js:774) [angular]
+    at Router.runNavigate (router.es5.js:3946) [angular]
+    at :3000/build/vendor.js:19098:51 [angular]
+    at ____________________Elapsed_3_ms__At__Fri_Jul_14_2017_11_39_12_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at ZoneAwarePromise.then (zone.js:845) [angular]
+    at Router.executeScheduledNavigation (router.es5.js:3915) [angular]
+    at MergeMapSubscriber.project (router.es5.js:3858) [angular]
+    at MergeMapSubscriber._tryNext (mergeMap.js:120) [angular]
+    at MergeMapSubscriber._next (mergeMap.js:110) [angular]
+    at ____________________Elapsed_2353_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at zoneAwareAddListener (zone.js:1450) [angular]
+    at HTMLAnchorElement.addEventListener (eval at createNamedFn (zone.js:1584), <anonymous>:3:43) [angular]
+    at DomEventsPlugin.addEventListener (platform-browser.es5.js:3083) [angular]
+    at EventManager.addEventListener (platform-browser.es5.js:2429) [angular]
+    at DefaultDomRenderer2.listen (platform-browser.es5.js:2942) [angular]
+    at DebugRenderer2.listen (core.es5.js:13277) [angular]
+    at ____________________Elapsed_14_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4642:17 [angular]
+    at Object.onInvokeTask (core.es5.js:4116) [angular]
+    at ____________________Elapsed_9_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/polyfills.js:4713:25 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+    at ____________________Elapsed_1_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at ZoneAwarePromise.then (zone.js:845) [angular]
+    at Function.ZoneAwarePromise.all (zone.js:825) [angular]
+    at JitCompiler._loadModules (compiler.es5.js:25142) [angular]
+    at JitCompiler._compileModuleAndComponents (compiler.es5.js:25093) [angular]
+    at JitCompiler.compileModuleAsync (compiler.es5.js:25055) [angular]
+    at ____________________Elapsed_2_ms__At__Fri_Jul_14_2017_11_39_09_GMT_0800__CST_ ()
+    at getStacktraceWithUncaughtError (long-stack-trace-zone.js:39) [angular]
+    at new LongStackTrace (long-stack-trace-zone.js:33) [angular]
+    at Object.onScheduleTask (long-stack-trace-zone.js:109) [angular]
+    at Object.onScheduleTask (zone.js:274) [angular]
+    at scheduleResolveOrReject (zone.js:756) [angular]
+    at resolvePromise (zone.js:705) [angular]
+    at :3000/build/polyfills.js:4520:17 [angular]
+    at :3000/build/main.js:1096:172 [angular]
+    at Object.onInvoke (core.es5.js:4125) [angular]
+
+Checking:
+    A)router config, no wrong sign:
+       const routes: Routes = [
+            { path:'route-study',
+                component:RouteStudyComponent,
+                children:[
+                    { path: '',loadChildren: './rshome/rshome.module#RSHomeModule' },
+                    { path: 'product', loadChildren: './product/product.module#ProductModule' },
+                ]
+            },
+            ];
+    B)routerLink setting, no wrong sign:
+         <nav>
+            <a routerLink="/rshome" routerLinkActive="active">rshome</a>
+            <a routerLink="/product" routerLinkActive="active">product</a>
+            <a routerLink="/list" routerLinkActive="active">product/list</a>
+            <a routerLink="/product/detail" routerLinkActive="active">product/detail</a>
+            <a routerLink="/product/detail/item" routerLinkActive="active">product/detail/item</a>
+            <a routerLink="/product/detail/item2" routerLinkActive="active">product/detail/item2</a>
+        </nav>
+        <router-outlet></router-outlet>
+    C)route-study child module product, no wrong also:
+       route config:
+           const routes: Routes = [
+            { path: 'list', component:ProductComponent,
+                outlet:'product', loadChildren: './list/list.module#ListModule' },
+            { path: 'detail',  component: ProductComponent, 
+                outlet:'detail', loadChildren: './detail/detail.module#DetailModule' },
+            { path: 'detail/item2',  component: ProductComponent, 
+                outlet:'detail', loadChildren: './detail/item2/item2.module#Item2Module' },
+            { path: '',  component: ProductComponent }
+            ];
+Double checking:
+      found hover mouse on product routerLink in browser, url show is "localhost:3000/product"
+      but "product" is child of route-study, so the correct url should be "localhost:3000/
+      /route-study/product",this is result of error.
+Solution:
+     A) routerLink setting should be include "route-study"
+         <nav>
+            <a routerLink="/rshome" routerLinkActive="active">rshome</a>
+            <a routerLink="/product" routerLinkActive="active">product</a>
+            <a routerLink="/list" routerLinkActive="active">product/list</a>
+            <a routerLink="/product/detail" routerLinkActive="active">product/detail</a>
+            <a routerLink="/product/detail/item" routerLinkActive="active">product/detail/item</a>
+            <a routerLink="/product/detail/item2" routerLinkActive="active">product/detail/item2</a>
+        </nav>
+        <router-outlet></router-outlet>
+    B) better way is :
+        <nav>
+            <a routerLink="rshome" routerLinkActive="active">rshome</a>
+            <a routerLink="product" routerLinkActive="active">product</a>
+        ...
+        this way is because of routerLink use 
+                 '/' for from root path
+                 './' or '' for from parent path
+************************************************************************************************
+39) loadChidren and named outlet
+    Error until version 4.3.0
+         core.es5.js:1020 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'route-study/product/list'
+            Error: Cannot match any routes. URL Segment: 'route-study/product/list'
+                at ApplyRedirects.noMatchError (http://localhost:3000/build/vendor.js:17467:16)
+                at CatchSubscriber.selector (http://localhost:3000/build/vendor.js:17442:29)
+                at CatchSubscriber.error (http://localhost:3000/build/vendor.js:72943:31)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at LastSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at ApplyRedirects.noMatchError (http://localhost:3000/build/vendor.js:17467:16)
+                at CatchSubscriber.selector (http://localhost:3000/build/vendor.js:17442:29)
+                at CatchSubscriber.error (http://localhost:3000/build/vendor.js:72943:31)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at MapSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at MapSubscriber.Subscriber.error (http://localhost:3000/build/vendor.js:243:18)
+                at LastSubscriber.Subscriber._error (http://localhost:3000/build/vendor.js:269:26)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4466:31)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4437:17)
+                at http://localhost:3000/build/polyfills.js:4514:17
+                at ZoneDelegate.invokeTask (http://localhost:3000/build/polyfills.js:4120:31)
+                at Object.onInvokeTask (http://localhost:3000/build/vendor.js:4481:33)
+                at ZoneDelegate.invokeTask (http://localhost:3000/build/polyfills.js:4119:36)
+                at Zone.runTask (http://localhost:3000/build/polyfills.js:3887:47)
+                at drainMicroTaskQueue (http://localhost:3000/build/polyfills.js:4280:35)
+                at HTMLAnchorElement.ZoneTask.invoke (http://localhost:3000/build/polyfills.js:4186:25)
+                at ____________________Elapsed_2_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_1_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_0_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_1_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at ZoneAwarePromise.then (http://localhost:3000/build/polyfills.js:4601:17)
+                at ____________________Elapsed_6_ms__At__Sat_Jul_15_2017_16_32_19_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at ZoneAwarePromise.then (http://localhost:3000/build/polyfills.js:4601:17)
+                at ____________________Elapsed_3957_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleEventTask (http://localhost:3000/build/polyfills.js:3957:25)
+                at zoneAwareAddListener (http://localhost:3000/build/polyfills.js:4975:14)
+                at HTMLAnchorElement.proto.(anonymous function) [as addEventListener] (http://localhost:3000/build/polyfills.js:5122:20)
+                at ____________________Elapsed_17_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at ZoneAwarePromise.then (http://localhost:3000/build/polyfills.js:4601:17)
+                at ____________________Elapsed_8_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_0_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+                at ____________________Elapsed_0_ms__At__Sat_Jul_15_2017_16_32_15_GMT_0800__CST_ (http://localhost)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3624:22)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Object.onScheduleTask (http://localhost:3000/build/polyfills.js:3996:29)
+                at ZoneDelegate.scheduleTask (http://localhost:3000/build/polyfills.js:4100:51)
+                at Zone.scheduleTask (http://localhost:3000/build/polyfills.js:3931:43)
+                at Zone.scheduleMicroTask (http://localhost:3000/build/polyfills.js:3951:25)
+                at scheduleResolveOrReject (http://localhost:3000/build/polyfills.js:4512:14)
+                at resolvePromise (http://localhost:3000/build/polyfills.js:4461:21)
+    
+    No solution now from https://github.com/angular/angular/issues/12842
+
+    Solution:
+       Firstly, let us know nested structure of router and loadChildren and outlet
+    -------------------------------------------------------------------------------------------------------------------------------
+       file structure :                   loadChildren         named outlets :                show which outlet:
+    --------------------------------------------------------------------------------------------------------------------------------
+       route-study module                rshome,product          primary                        parent's-- app's primary
+            |--- rshome module             none                  none because of no children    parent's-- route-study's primary
+            |--- product module          list,detail,item2       primary and 'product' outlet   parent's-- route-study's primary
+                |---list module            none                  none                           parent's 'product' outlet
+                |---detail module          item                  'detail' outlet                no set outlet in parent's primary
+                    |---item module        none                  none                           set outlet 'detail' in 'detail' outlet
+                    |---item2 module       none                  product's primary              product's primary
+    
+       Secondly, loadChidren setting
+            A) children way, using first lazy load level:
+                const routes: Routes = [        // --- inside route-study
+                    { path:'route-study',
+                        // outlet: 'product',   <-- CAN'T CALL CHILD'S OUTLET
+                        component:RouteStudyComponent,
+                        children:[
+                            { path: 'rshome', 
+                            loadChildren: './rshome/rshome.module#RSHomeModule' },
+                            { path: 'product', 
+                            loadChildren: './product/product.module#ProductModule' },
+                        ]
+                    }
+                    ];
+            B) parallel way, using below first lazy load level: 
+                const routes: Routes = [
+                    { path: 'list',
+                         component: ProductComponent,
+                        // outlet:'product', 
+                        loadChildren: './list/list.module#ListModule' },
+                    { path: 'detail', 
+                        component: ProductComponent,
+                        // outlet:'detail', 
+                        loadChildren: './detail/detail.module#DetailModule' },
+                    { path: 'item2',  
+                         component: ProductComponent,
+                        // outlet:'detail', 
+                        loadChildren: './detail/item2/item2.module#Item2Module' },
+                    { path: '',  component: ProductComponent }
+                    ];
+                Be careful to relation between component and outlet
+                   1) named outlet can't set loadChildren until now 2017/07/17,can set low level compnent,
+                      but outlet is this low level component's parent's 
+                      from https://github.com/angular/angular/issues/12842 there is one solution:
+                       {
+                            path: 'me',
+                            outlet: 'hub',
+                            component: ProxyRouteComponent,
+                            children: [
+                                {
+                                    path: '',
+                                    loadChildren: 'hub#HubModule',
+                                },
+                            ],
+                        },
+                        import { Component } from '@angular/core';
+                            @Component({
+                                selector: 'b-proxy-route',
+                                template: '<router-outlet></router-outlet>',
+                            })
+                            export class ProxyRouteComponent {
+                            }
+
+                   2) no set component with loadChildren
+                       2-1) lazy load module set named outlet which is in lazy load module's parent
+                            component, this module work fine but now showed ,because of no component
+                            to hold this lazy load module
+                       2-2) no set component, lazy load cat travse up route tree for outlet, if
+                            lazy load module no outlet set.
+                   3) set component ie. ProductComponent, there are two outlet show if lazy load
+                      module set named outlet.
+*********************************************************************************************

@@ -1,0 +1,12 @@
+curl -X POST -H "Content-Type: application/json" -d '{"firstName":"first","lastName":"Last","email":"mgpeng@msn.com","username":"mgpeng","password":"gpeng"}' localhost:3000/users
+curl -X POST -H "Content-Type: application/json" -d '{"firstName":"Yijue","lastName":"Peng","email":"mgpeng@gmail.com","username":"gmail","password":"1234"}' localhost:3000/users
+curl -X POST -H "Content-Type: application/json" -d '{"firstName":"meihua","lastName":"Wan","email":"mei@hotmail.com","username":"meihua","password":"3456"}' localhost:3000/users
+
+curl -X POST -H "Content-Type: application/json" -d '{"firstName":"yijia","lastName":"peng","email":"pengyijia@hotmail.com","username":"pengyijia","password":"3456","website":"www.sinahu.com"}' localhost:3000/users
+
+curl -X POST -H "Content-Type: application/json" -d '{"firstName":"abac","website":"www.sinahu.com"}' localhost:3000/users
+
+curl -X PUT -H "Content-Type: application/json" -d '{"lastName":"Updated"}' localhost:3000/users/58d6377eb3e31a3e3b5ebe19
+
+curl -X DELETE localhost:3000/users/58d685dd80e5fe4189948230
+

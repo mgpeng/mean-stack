@@ -1,0 +1,43 @@
+List all errors about OAuth 1,2 , eg. google, facebook, twitter
+**********************************************************************************
+1)route to /api/oauth/google but wait long time for localhost runing
+  Error
+   at Strategy.OAuth2Strategy._createOAuthError (/Users/apple/Documents/xixijiu_ng-md/mean-stack/node_modules/passport-oauth2/lib/strategy.js:379:17)
+   at /Users/apple/Documents/xixijiu_ng-md/mean-stack/node_modules/passport-oauth2/lib/strategy.js:166:45
+   at /Users/apple/Documents/xixijiu_ng-md/mean-stack/node_modules/oauth/lib/oauth2.js:191:18
+   at ClientRequest.<anonymous> (/Users/apple/Documents/xixijiu_ng-md/mean-stack/node_modules/oauth/lib/oauth2.js:162:5)
+   at emitOne (events.js:96:13)
+   at ClientRequest.emit (events.js:191:7)
+   at TLSSocket.socketErrorListener (_http_client.js:358:9)
+   at emitOne (events.js:96:13)
+   at TLSSocket.emit (events.js:191:7)
+   at emitErrorNT (net.js:1295:8)
+   at _combinedTickCallback (internal/process/next_tick.js:80:11)
+   at process._tickCallback (internal/process/next_tick.js:104:9)
+Clues:
+ a) browser show "waiting localhost respond" and before show this, show have successfully
+    connected to account.google.com
+ b) if I cut vpn , browser show "waiting account.google.com" or account.google.com
+    can't open
+ c) termimal show "GET /api/oauth/google 302 8.418 ms - 0" then show error above
+ d) after show error in browser, navigation bar show "localhost:3000/api/oauth/google/
+    callback?code=4/UCNgVxtKVuryysF9TS_nvSUXzdsKSR731yn_63bhPnc#" seem like request GET
+    some data
+ e) this is first time show this error, before work fine.
+ Final result:
+    VPN ( PlexVPN ) do something to make localhost callback can't do, 
+ Solution:
+    change FlowVPN, work fine.
+*********************************************************************************************
+  2)can't climb out wall
+  Error
+   at /Users/apple/Documents/xixijiu_ng-md/mean-stack/node_modules/passport-google-oauth20/lib/strategy.js:99:19
+   at ClientRequest.<anonymous> (/Users/apple/Documents/xixijiu_ng-md/mean-stack/node_modules/oauth/lib/oauth2.js:162:5)
+   at emitOne (events.js:96:13)
+   at ClientRequest.emit (events.js:191:7)
+   at TLSSocket.socketErrorListener (_http_client.js:358:9)
+   at emitOne (events.js:96:13)
+   at TLSSocket.emit (events.js:191:7)
+   at emitErrorNT (net.js:1295:8)
+   at _combinedTickCallback (internal/process/next_tick.js:80:11)
+   at process._tickCallback (internal/process/next_tick.js:104:9)

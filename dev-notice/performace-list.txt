@@ -1,0 +1,6 @@
+This file is specific list for improve performace and decrease bundles size
+
+1) vendor bundle file super big, 8m more
+   reference great blog http://blog.mgechev.com/2016/06/26/tree-shaking-angular2-production-build-rollup-javascript/
+   check webpack setting, 
+      

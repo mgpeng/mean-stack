@@ -3,10 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ProductComponent }         from './product.component';
 
-import { DetailModule } from './detail/detail.module';
-import { ListModule } from './list/list.module';
-import { ItemModule } from './detail/item/item.module';
-import { Item2Module } from './detail/item2/item2.module';
+// import { DetailModule } from './detail/detail.module';
+// import { ListModule } from './list/list.module';
+// import { ItemModule } from './detail/item/item.module';
+// import { Item2Module } from './detail/item2/item2.module';
 
 // export function loadDetailModule() { return DetailModule; }
 // export function loadListModule() { return ListModule; }

@@ -1,1 +1,0 @@
-{"version":3,"sources":["product.component.ts"],"names":[],"mappings":";;;;;;AAAA,OAAO,EAAE,SAAA,EAAU,MAAO,eAAA,CAAgB;AAgB1C,IAAa,gBAAgB;IAA7B;IAA+B,CAAC;IAAD,uBAAC;AAAD,CAA/B,AAAgC,IAAA;AAAnB,gBAAgB;IAd5B,SAAS,CAAC;QACT,uBAAuB;QACvB,QAAQ,EAAE,YAAY;QACtB,QAAQ,EAAE,kPAQT;KAEF,CAAC;GACW,gBAAgB,CAAG;SAAnB,gBAAgB","file":"product.component.js","sourceRoot":""}
