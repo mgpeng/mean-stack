@@ -9,12 +9,19 @@
 
 
 -------------- deploying code to cloud ------------------
-github>
-    create new repo, copy url
-local repo>
-   create connect:
-    git remote add ongithub https://github.com/mgpeng/mean-stack.git
-    git remote add origin root@123.206.106.64:/root/mean-stack/
+local new repo connect to new github repo>
+   github>
+       create new repo, copy url
+   local repo>
+       git init
+       git add .
+       git commit -m "First commit"
+       git remote add ongithub https://github.com/mgpeng/mean-stack.git
+       git remote add origin root@123.206.106.64:/root/mean-stack/
+       git push -u ongithub master (use for first time) ,late: git push ongithub master
+       git push -u origin master  (use for first time) ,late: git push origin master
+                                this is send to tenxunyun : root@123.206.106.64 
+                                input password : xixijiu999
 tenxunyun>
     before>
         centOs use yum install git (googling to find article)
@@ -24,7 +31,8 @@ tenxunyun>
      doing>
         mkdir mean-stack
         mean-stack> git init --bare
-local repo>
+
+local repo and up to github and tenxunyun >
        git add .
        git commit -m "message string"
        git push -u ongithub master (use for first time) ,late: git push ongithub master
@@ -47,7 +55,7 @@ tenxunyun>
       cd mean-stack and ls -al check if changed files
        cd clone-mean-stack
        git pull (from bare repo in mean-stack) and ls -al check if changed files
-       npm install
+       ***Pay attention***  npm install  *** don’t need do this ***
        node server.js
        browser> tenxunyun-public-ip:3000  as 123.206.106.64:3000
 

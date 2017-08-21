@@ -1,0 +1,7 @@
+Project Goal:
+   1) based book: Mean Stack Development second edition by Amos Q Haviv
+   2) seperate client side and server side code
+   3) no use angular-cli
+   4) add more webpack , eg. client and server separate bundle
+   5) aot --- aot-plugin work fine but aot doesn't work
+   6)
